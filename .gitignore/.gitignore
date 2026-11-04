@@ -1,0 +1,11 @@
+# Banco de Dados Local
+*.sqlite
+*.sqlite3
+*.db
+
+# Arquivos do Python
+__pycache__/
+*.pyc
+
+# Configurações do VS Code
+.vscode/
