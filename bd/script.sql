@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS cao (
     peso REAL NOT NULL,
     porte TEXT CHECK(porte IN ('Pequeno', 'Médio', 'Grande')) NOT NULL,
     idade INTEGER NOT NULL,
-    castrado INTEGER NOT NULL,
-    observacoes TEXT
+    castrado INTEGER NOT NULL, -- 0 para Não, 1 para Sim
+    observacoes TEXT,
+    data_entrada TEXT NOT NULL,
+    data_saida TEXT
 );
