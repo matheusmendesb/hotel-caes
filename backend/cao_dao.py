@@ -30,7 +30,7 @@ class CaoDAO:
         ''')
         conn.commit()
         conn.close()
-
+                                                                                                                                                                                                                                                                            #ass master_theus
     def cadastrar(self, cao):
         conn = self.conectar()
         cursor = conn.cursor()
