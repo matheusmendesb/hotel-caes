@@ -1,5 +1,5 @@
 class Cao:
-    def __init__(self, nome, raca, sexo, peso, porte, idade, castrado, data_entrada, data_saida="", observacoes="", id=None):
+    def __init__(self, nome, raca, sexo, peso, porte, idade, castrado, observacoes, data_entrada, data_saida=None, tutor_id=None, id=None):
         self.id = id
         self.nome = nome
         self.raca = raca
@@ -8,9 +8,10 @@ class Cao:
         self.porte = porte
         self.idade = idade
         self.castrado = castrado
+        self.observacoes = observacoes
         self.data_entrada = data_entrada
         self.data_saida = data_saida
-        self.observacoes = observacoes
+        self.tutor_id = tutor_id
 
     def to_dict(self):
         return {
@@ -22,7 +23,8 @@ class Cao:
             "porte": self.porte,
             "idade": self.idade,
             "castrado": self.castrado,
+            "observacoes": self.observacoes,
             "data_entrada": self.data_entrada,
             "data_saida": self.data_saida,
-            "observacoes": self.observacoes
+            "tutor_id": self.tutor_id
         }
