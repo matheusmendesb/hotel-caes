@@ -10,12 +10,7 @@ def cadastrar_tutor(tutor):
         VALUES (%s, %s, %s, %s)
     """
 
-    valores = (
-        tutor.nome,
-        tutor.telefone,
-        tutor.email,
-        tutor.morada
-    )
+    valores = (tutor.nome, tutor.telefone, tutor.email, tutor.morada)
 
     cursor.execute(sql, valores)
     conexao.commit()
@@ -37,15 +32,9 @@ def cadastrar_cao(cao):
     """
 
     valores = (
-        cao.nome,
-        cao.raca,
-        cao.sexo,
-        cao.peso_atual,
-        cao.porte,
-        cao.idade,
-        cao.castrado,
-        cao.observacoes,
-        cao.tutor_id
+        cao.nome, cao.raca, cao.sexo, cao.peso_atual,
+        cao.porte, cao.idade, cao.castrado,
+        cao.observacoes, cao.tutor_id
     )
 
     cursor.execute(sql, valores)
@@ -78,3 +67,42 @@ def cadastrar_hospedagem(hospedagem):
 
     cursor.close()
     conexao.close()
+
+
+def listar_tutores():
+    conexao = conectar()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM tutor")
+    tutores = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return tutores
+
+
+def listar_caes():
+    conexao = conectar()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM cao")
+    caes = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return caes
+
+
+def listar_hospedagens():
+    conexao = conectar()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM hospedagem")
+    hospedagens = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return hospedagens
