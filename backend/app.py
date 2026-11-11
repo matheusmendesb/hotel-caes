@@ -1,12 +1,16 @@
+
 from flask import Flask, request, jsonify
 from backend.database import conectar
 from backend.tutor import Tutor
 from backend.cao import Cao
+from backend.hospedagem import Hospedagem
 from backend.dao import (
     cadastrar_tutor,
     listar_tutores,
     cadastrar_cao,
-    listar_caes
+    listar_caes,
+    cadastrar_hospedagem,
+    listar_hospedagens
 )
 
 app = Flask(__name__)
@@ -19,8 +23,7 @@ def inicio():
 
 @app.route("/tutores", methods=["GET"])
 def consultar_tutores():
-    tutores = listar_tutores()
-    return jsonify(tutores)
+    return jsonify(listar_tutores())
 
 
 @app.route("/tutores", methods=["POST"])
@@ -41,8 +44,7 @@ def criar_tutor():
 
 @app.route("/caes", methods=["GET"])
 def consultar_caes():
-    caes = listar_caes()
-    return jsonify(caes)
+    return jsonify(listar_caes())
 
 
 @app.route("/caes", methods=["POST"])
@@ -64,6 +66,27 @@ def criar_cao():
     cadastrar_cao(cao)
 
     return jsonify({"mensagem": "Cao cadastrado com sucesso!"}), 201
+
+
+@app.route("/hospedagens", methods=["GET"])
+def consultar_hospedagens():
+    return jsonify(listar_hospedagens())
+
+
+@app.route("/hospedagens", methods=["POST"])
+def criar_hospedagem():
+    dados = request.get_json()
+
+    hospedagem = Hospedagem(
+        dados["cao_id"],
+        dados["peso_registrado"],
+        dados["data_entrada"],
+        dados.get("data_saida")
+    )
+
+    cadastrar_hospedagem(hospedagem)
+
+    return jsonify({"mensagem": "Hospedagem cadastrada com sucesso!"}), 201
 
 
 if __name__ == "__main__":

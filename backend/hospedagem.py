@@ -1,3 +1,4 @@
+
 class Hospedagem:
     def __init__(self, cao_id, peso_registrado, data_entrada, data_saida):
         self.cao_id = cao_id
