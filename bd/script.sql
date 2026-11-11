@@ -1,8 +1,8 @@
-CREATE DATABASE hotel_caes;
+CREATE DATABASE IF NOT EXISTS hotel_caes;
 
 USE hotel_caes;
 
-CREATE TABLE tutor (
+CREATE TABLE IF NOT EXISTS tutor (
     id_tutor INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     telefone VARCHAR(20) NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE tutor (
     morada VARCHAR(150)
 );
 
-CREATE TABLE cao (
+CREATE TABLE IF NOT EXISTS cao (
     id_cao INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     raca VARCHAR(60) NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE cao (
     FOREIGN KEY (tutor_id) REFERENCES tutor(id_tutor)
 );
 
-CREATE TABLE hospedagem (
+CREATE TABLE IF NOT EXISTS hospedagem (
     id_hospedagem INT AUTO_INCREMENT PRIMARY KEY,
     cao_id INT NOT NULL,
     peso_registrado DECIMAL(5,2) NOT NULL,
