@@ -19,15 +19,26 @@ def cadastrar_tutor(tutor):
     conexao.close()
 
 
+def listar_tutores():
+    conexao = conectar()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM tutor")
+    resultado = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return resultado
+
+
 def cadastrar_cao(cao):
     conexao = conectar()
     cursor = conexao.cursor()
 
     sql = """
-        INSERT INTO cao (
-            nome, raca, sexo, peso_atual, porte,
-            idade, castrado, observacoes, tutor_id
-        )
+        INSERT INTO cao
+        (nome, raca, sexo, peso_atual, porte, idade, castrado, observacoes, tutor_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
     """
 
@@ -44,14 +55,26 @@ def cadastrar_cao(cao):
     conexao.close()
 
 
+def listar_caes():
+    conexao = conectar()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("SELECT * FROM cao")
+    resultado = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return resultado
+
+
 def cadastrar_hospedagem(hospedagem):
     conexao = conectar()
     cursor = conexao.cursor()
 
     sql = """
-        INSERT INTO hospedagem (
-            cao_id, peso_registrado, data_entrada, data_saida
-        )
+        INSERT INTO hospedagem
+        (cao_id, peso_registrado, data_entrada, data_saida)
         VALUES (%s, %s, %s, %s)
     """
 
@@ -69,40 +92,14 @@ def cadastrar_hospedagem(hospedagem):
     conexao.close()
 
 
-def listar_tutores():
-    conexao = conectar()
-    cursor = conexao.cursor(dictionary=True)
-
-    cursor.execute("SELECT * FROM tutor")
-    tutores = cursor.fetchall()
-
-    cursor.close()
-    conexao.close()
-
-    return tutores
-
-
-def listar_caes():
-    conexao = conectar()
-    cursor = conexao.cursor(dictionary=True)
-
-    cursor.execute("SELECT * FROM cao")
-    caes = cursor.fetchall()
-
-    cursor.close()
-    conexao.close()
-
-    return caes
-
-
 def listar_hospedagens():
     conexao = conectar()
     cursor = conexao.cursor(dictionary=True)
 
     cursor.execute("SELECT * FROM hospedagem")
-    hospedagens = cursor.fetchall()
+    resultado = cursor.fetchall()
 
     cursor.close()
     conexao.close()
 
-    return hospedagens
+    return resultado

@@ -1,5 +1,6 @@
 class Cao:
-    def __init__(self, nome, raca, sexo, peso_atual, porte, idade, castrado, observacoes, tutor_id):
+    def __init__(self, nome, raca, sexo, peso_atual, porte,
+                 idade, castrado, observacoes, tutor_id):
         self.nome = nome
         self.raca = raca
         self.sexo = sexo
