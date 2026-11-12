@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify
 
 from backend.tutor import Tutor
@@ -12,6 +13,8 @@ from backend.dao import (
     cadastrar_hospedagem,
     listar_hospedagens
 )
+
+from backend.database import conectar
 
 app = Flask(__name__)
 
@@ -90,4 +93,11 @@ def adicionar_hospedagem():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    try:
+        conexao = conectar()
+        conexao.close()
+
+        app.run(debug=True)
+
+    except Exception as erro:
+        print("Erro ao conectar:", erro)
