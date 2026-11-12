@@ -1,5 +1,7 @@
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
+from pathlib import Path
+from mysql.connector import IntegrityError
 
 from backend.tutor import Tutor
 from backend.cao import Cao
@@ -8,6 +10,8 @@ from backend.hospedagem import Hospedagem
 from backend.dao import (
     cadastrar_tutor,
     listar_tutores,
+    editar_tutor,
+    excluir_tutor,
     cadastrar_cao,
     listar_caes,
     cadastrar_hospedagem,
@@ -16,13 +20,22 @@ from backend.dao import (
 
 from backend.database import conectar
 
-app = Flask(__name__)
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+app = Flask(
+    __name__,
+    static_folder=str(BASE_DIR / "front-end"),
+    static_url_path="/front-end"
+)
 
 
 @app.route("/")
 def inicio():
-    return "Sistema Hotel para Caes funcionando!"
+    return send_from_directory(BASE_DIR, "index.html")
 
+
+# ROTAS DE TUTORES
 
 @app.route("/tutores", methods=["GET"])
 def consultar_tutores():
@@ -36,14 +49,51 @@ def adicionar_tutor():
     tutor = Tutor(
         dados["nome"],
         dados["telefone"],
-        dados["email"],
-        dados["morada"]
+        dados.get("email"),
+        dados.get("morada")
     )
 
     cadastrar_tutor(tutor)
 
     return jsonify({"mensagem": "Tutor cadastrado!"}), 201
 
+
+@app.route("/tutores/<int:id_tutor>", methods=["PUT"])
+def atualizar_tutor(id_tutor):
+    dados = request.get_json()
+
+    tutor = Tutor(
+        dados["nome"],
+        dados["telefone"],
+        dados.get("email"),
+        dados.get("morada")
+    )
+
+    atualizado = editar_tutor(id_tutor, tutor)
+
+    if not atualizado:
+        return jsonify({"erro": "Tutor não encontrado!"}), 404
+
+    return jsonify({"mensagem": "Tutor atualizado com sucesso!"})
+
+
+@app.route("/tutores/<int:id_tutor>", methods=["DELETE"])
+def remover_tutor(id_tutor):
+    try:
+        excluido = excluir_tutor(id_tutor)
+
+        if not excluido:
+            return jsonify({"erro": "Tutor não encontrado!"}), 404
+
+        return jsonify({"mensagem": "Tutor excluído com sucesso!"})
+
+    except IntegrityError:
+        return jsonify({
+            "erro": "Não é possível excluir este tutor porque existem cães vinculados a ele."
+        }), 409
+
+
+# ROTAS DE CÃES
 
 @app.route("/caes", methods=["GET"])
 def consultar_caes():
@@ -62,7 +112,7 @@ def adicionar_cao():
         dados["porte"],
         dados["idade"],
         dados["castrado"],
-        dados["observacoes"],
+        dados.get("observacoes"),
         dados["tutor_id"]
     )
 
@@ -70,6 +120,8 @@ def adicionar_cao():
 
     return jsonify({"mensagem": "Cao cadastrado!"}), 201
 
+
+# ROTAS DE HOSPEDAGENS
 
 @app.route("/hospedagens", methods=["GET"])
 def consultar_hospedagens():
@@ -97,6 +149,7 @@ if __name__ == "__main__":
         conexao = conectar()
         conexao.close()
 
+        print("Banco de dados conectado!")
         app.run(debug=True)
 
     except Exception as erro:

@@ -1,0 +1,254 @@
+
+/* CONFIGURAÇÕES GERAIS */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f1f5f9;
+    color: #1e293b;
+    display: flex;
+    min-height: 100vh;
+}
+
+/* MENU LATERAL */
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background-color: #123b66;
+    color: white;
+    padding: 30px 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.sidebar h2 {
+    font-size: 21px;
+    margin-bottom: 40px;
+    text-align: center;
+    overflow-wrap: break-word;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar nav a {
+    color: #dbeafe;
+    text-decoration: none;
+    padding: 14px 16px;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.ativo {
+    background-color: #2563a6;
+    color: white;
+}
+
+/* CONTEÚDO PRINCIPAL */
+.conteudo {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    min-width: 0;
+    padding: 40px;
+}
+
+header {
+    margin-bottom: 35px;
+}
+
+header h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+    color: #123b66;
+    overflow-wrap: break-word;
+}
+
+header p {
+    color: #64748b;
+    font-size: 15px;
+    overflow-wrap: break-word;
+}
+
+/* CARDS DO DASHBOARD */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid #2563a6;
+    min-width: 0;
+    margin-bottom: 22px;
+    overflow: hidden;
+}
+
+.card h3 {
+    color: #64748b;
+    font-size: 16px;
+    margin-bottom: 15px;
+    overflow-wrap: break-word;
+}
+
+.card p {
+    color: #123b66;
+    font-size: 32px;
+    font-weight: bold;
+    overflow-wrap: break-word;
+}
+
+/* FORMULÁRIOS */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+form label {
+    color: #334155;
+    font-size: 14px;
+    font-weight: bold;
+    overflow-wrap: break-word;
+}
+
+form input,
+form select,
+form textarea {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-size: 15px;
+    outline: none;
+}
+
+form input:focus,
+form select:focus,
+form textarea:focus {
+    border-color: #2563a6;
+    box-shadow: 0 0 0 2px rgba(37, 99, 166, 0.12);
+}
+
+form button {
+    width: fit-content;
+    max-width: 100%;
+    padding: 12px 20px;
+    margin-top: 10px;
+    background-color: #2563a6;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 15px;
+    cursor: pointer;
+    overflow-wrap: break-word;
+}
+
+form button:hover {
+    background-color: #123b66;
+}
+
+/* MENSAGENS */
+#mensagem-tutor {
+    margin-top: 15px;
+    font-size: 14px;
+    overflow-wrap: break-word;
+}
+
+/* TABELAS */
+.tabela-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    min-width: 650px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th,
+td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+    overflow-wrap: break-word;
+}
+
+th {
+    background-color: #f1f5f9;
+    color: #123b66;
+    font-weight: bold;
+}
+
+td {
+    color: #475569;
+}
+
+tr:hover td {
+    background-color: #f8fafc;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 190px;
+        padding: 25px 12px;
+    }
+
+    .conteudo {
+        margin-left: 190px;
+        width: calc(100% - 190px);
+        padding: 25px 15px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 500px) {
+    .sidebar {
+        width: 130px;
+        padding: 20px 8px;
+    }
+
+    .sidebar h2 {
+        font-size: 16px;
+    }
+
+    .sidebar nav a {
+        padding: 12px 8px;
+        font-size: 13px;
+    }
+
+    .conteudo {
+        margin-left: 130px;
+        width: calc(100% - 130px);
+        padding: 20px 10px;
+    }
+
+    header h1 {
+        font-size: 23px;
+    }
+}
