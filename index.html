@@ -1,56 +1,142 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hotel Carmesim - Sistema de gerenciamento de hospedagem e cuidados para cães.">
 
-    <title>Hotel para Cães</title>
+    <title>Hotel Carmesim | Gestão</title>
 
-    <!-- Arquivo CSS -->
     <link rel="stylesheet" href="./front-end/CSS/style.css">
 </head>
+
 <body>
 
+    <!-- MENU LATERAL -->
     <aside class="sidebar">
-        <h2>Hotel para Cães</h2>
+
+        <div class="logo">
+            <div class="logo-texto">
+                <h2>Hotel Carmesim</h2>
+                <span>GESTÃO E HOSPEDAGEM</span>
+            </div>
+        </div>
+
+        <div class="menu-titulo">NAVEGAÇÃO</div>
 
         <nav>
-            <a href="#" class="ativo">Inicio</a>
-            <a href="#">Tutores</a>
-            <a href="#">Cães</a>
-            <a href="#">Hospedagens</a>
+
+            <a href="#" class="ativo" aria-label="Início">
+                <svg class="menu-icone" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="8" height="8" rx="1.5"/>
+                    <rect x="13" y="3" width="8" height="5" rx="1.5"/>
+                    <rect x="13" y="10" width="8" height="11" rx="1.5"/>
+                    <rect x="3" y="13" width="8" height="8" rx="1.5"/>
+                </svg>
+                <span class="menu-label">Início</span>
+            </a>
+
+            <a href="#" aria-label="Tutores">
+                <svg class="menu-icone" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="8" r="3.5"/>
+                    <path d="M2.5 20a6.5 6.5 0 0 1 13 0"/>
+                    <path d="M16 5.5a3.5 3.5 0 0 1 0 6.8"/>
+                    <path d="M17 14a6 6 0 0 1 4.5 5.8"/>
+                </svg>
+                <span class="menu-label">Tutores</span>
+            </a>
+
+            <a href="#" aria-label="Cães">
+                <svg class="menu-icone" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.7"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <ellipse cx="12" cy="15.5" rx="5.2" ry="4.2"/>
+                    <ellipse cx="5.2" cy="9" rx="2" ry="2.7"
+                        transform="rotate(-25 5.2 9)"/>
+                    <ellipse cx="10" cy="5.8" rx="2" ry="2.7"
+                        transform="rotate(-8 10 5.8)"/>
+                    <ellipse cx="15" cy="5.8" rx="2" ry="2.7"
+                        transform="rotate(8 15 5.8)"/>
+                    <ellipse cx="18.8" cy="9" rx="2" ry="2.7"
+                        transform="rotate(25 18.8 9)"/>
+                </svg>
+                <span class="menu-label">Cães</span>
+            </a>
+
+            <a href="#" aria-label="Hospedagens">
+                <svg class="menu-icone" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="17" rx="2"/>
+                    <path d="M16 2v4M8 2v4M3 9h18"/>
+                    <path d="m9 15 2 2 4-4"/>
+                </svg>
+                <span class="menu-label">Hospedagens</span>
+            </a>
+
         </nav>
+
+        <div class="sidebar-rodape">
+            <span>Sistema de gerenciamento</span>
+            <strong>Hotel Carmesim</strong>
+        </div>
+
     </aside>
 
+    <!-- CONTEÚDO PRINCIPAL -->
     <main class="conteudo">
 
         <header>
-            <h1>Dashboard</h1>
-            <p>Bem-vindo ao sistema do Hotel para Cães.</p>
+            <span class="pagina-subtitulo">VISÃO GERAL</span>
+            <h1>Painel inicial</h1>
+            <p>Acompanhe os cadastros e a movimentação do Hotel Carmesim.</p>
         </header>
 
+        <!-- INDICADORES -->
         <section class="cards">
 
             <div class="card">
-                <h3>Tutores</h3>
+                <h3>Tutores cadastrados</h3>
                 <p id="total-tutores">0</p>
             </div>
 
             <div class="card">
-                <h3>Cães</h3>
+                <h3>Cães cadastrados</h3>
                 <p id="total-caes">0</p>
             </div>
 
             <div class="card">
-                <h3>Hospedagens</h3>
+                <h3>Hospedagens registradas</h3>
                 <p id="total-hospedagens">0</p>
+            </div>
+
+        </section>
+
+        <!-- APRESENTAÇÃO DO SISTEMA -->
+        <section class="apresentacao">
+
+            <div class="apresentacao-conteudo">
+                <span class="pagina-subtitulo">HOTEL CARMESIM</span>
+
+                <h2>Gestão organizada, cuidado em cada detalhe.</h2>
+
+                <p>
+                    Gerencie tutores, acompanhe os cães cadastrados
+                    e organize as hospedagens em um único lugar.
+                </p>
             </div>
 
         </section>
 
     </main>
 
-    <!-- Arquivo JavaScript principal -->
     <script type="module" src="./front-end/js/script.js"></script>
+
 </body>
 </html>

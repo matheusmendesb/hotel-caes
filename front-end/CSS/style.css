@@ -1,13 +1,29 @@
-/* =====================================================
-   HOTEL PARA CÃES
-   Folha de estilos principal do sistema
-   ===================================================== */
-
 
 /* =====================================================
-   1. CONFIGURAÇÕES GERAIS
-   Define o padrão visual de todos os elementos
+   HOTEL CARMESIM
+   Folha de estilos principal
    ===================================================== */
+
+/* 1. CONFIGURAÇÕES GERAIS */
+
+:root {
+    --carmesim: #8B1E3F;
+    --carmesim-escuro: #5C142B;
+    --carmesim-claro: #F8E9EE;
+
+    --fundo: #F7F3F0;
+    --branco: #FFFFFF;
+
+    --texto: #29252A;
+    --texto-secundario: #777078;
+
+    --borda: #E9E1E4;
+    --sucesso: #287A52;
+    --erro: #B42318;
+
+    --sombra: 0 4px 18px rgba(60, 30, 42, 0.06);
+    --raio: 12px;
+}
 
 * {
     margin: 0;
@@ -17,81 +33,151 @@
 }
 
 body {
-    background-color: #f1f5f9;
-    color: #1e293b;
+    background-color: var(--fundo);
+    color: var(--texto);
     display: flex;
     min-height: 100vh;
 }
 
 
-/* =====================================================
-   2. MENU LATERAL
-   Estilização da navegação principal
-   ===================================================== */
+/* 2. MENU LATERAL */
 
 .sidebar {
-    width: 250px;
+    width: 260px;
     min-height: 100vh;
-    background: linear-gradient(180deg, #123b66, #0d2d4d);
-    color: white;
-    padding: 30px 20px;
+    background: linear-gradient(
+        180deg,
+        var(--carmesim-escuro),
+        #401020
+    );
+    color: var(--branco);
+    padding: 28px 18px;
     position: fixed;
     left: 0;
     top: 0;
+    bottom: 0;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
 }
 
-/* Nome do sistema no menu */
+/* Identidade visual */
 
-.sidebar h2 {
-    font-size: 21px;
-    margin-bottom: 40px;
-    text-align: center;
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 5px 8px 30px;
+}
+
+.logo-icone {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.logo-texto h2 {
+    font-size: 17px;
+    margin-bottom: 5px;
+    color: var(--branco);
     overflow-wrap: break-word;
-    position: relative;
-    z-index: 1;
 }
 
-/* Organização dos links */
+.logo-texto span {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #E8C7D2;
+}
+
+/* Título do menu */
+
+.menu-titulo {
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1.5px;
+    color: #D7AAB9;
+    padding: 12px 12px;
+}
+
+/* Navegação */
 
 .sidebar nav {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 7px;
     position: relative;
     z-index: 1;
 }
 
-/* Aparência dos links */
-
 .sidebar nav a {
-    color: #dbeafe;
+    color: #EADCE1;
     text-decoration: none;
-    padding: 14px 16px;
-    border-radius: 8px;
-    transition: background-color 0.3s, transform 0.3s;
+    padding: 13px 14px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    transition: 0.2s ease;
 }
 
-/* Efeito ao passar o mouse e página selecionada */
+.menu-icone {
+    width: 22px;
+    text-align: center;
+    font-size: 19px;
+}
 
 .sidebar nav a:hover,
 .sidebar nav a.ativo {
-    background-color: #2563a6;
-    color: white;
-    transform: translateX(3px);
+    background-color: rgba(255, 255, 255, 0.14);
+    color: var(--branco);
 }
 
-/* Patinha decorativa feita com formas CSS */
+.sidebar nav a.ativo {
+    border-left: 3px solid #E8A9BE;
+    padding-left: 11px;
+}
+
+/* Rodapé do menu */
+
+.sidebar-rodape {
+    margin-top: auto;
+    padding: 18px 10px 5px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
+    color: #D7AAB9;
+}
+
+.sidebar-rodape strong {
+    color: var(--branco);
+    font-size: 12px;
+}
+
+/* Elemento decorativo */
 
 .sidebar::after {
     content: "";
     position: absolute;
     width: 110px;
     height: 110px;
-    right: 25px;
-    bottom: 35px;
-    opacity: 0.12;
+    right: 20px;
+    bottom: 85px;
+    opacity: 0.07;
     transform: rotate(-25deg);
+    pointer-events: none;
 
     background:
         radial-gradient(ellipse at 50% 76%, white 0 17%, transparent 18%),
@@ -102,90 +188,104 @@ body {
 }
 
 
-/* =====================================================
-   3. CONTEÚDO PRINCIPAL
-   Área onde as páginas são exibidas
-   ===================================================== */
+/* 3. CONTEÚDO PRINCIPAL */
 
 .conteudo {
-    margin-left: 250px;
-    width: calc(100% - 250px);
+    margin-left: 260px;
+    width: calc(100% - 260px);
     min-width: 0;
     padding: 40px;
 }
 
-/* Cabeçalho das páginas */
+/* Cabeçalho */
 
 header {
-    margin-bottom: 35px;
+    margin-bottom: 32px;
+}
+
+.pagina-subtitulo {
+    display: block;
+    color: var(--carmesim);
+    font-size: 10px;
+    font-weight: bold;
+    letter-spacing: 1.7px;
+    margin-bottom: 9px;
 }
 
 header h1 {
-    font-size: 28px;
-    margin-bottom: 8px;
-    color: #123b66;
+    font-size: 29px;
+    margin-bottom: 9px;
+    color: var(--carmesim-escuro);
     overflow-wrap: break-word;
 }
 
 header p {
-    color: #64748b;
-    font-size: 15px;
+    color: var(--texto-secundario);
+    font-size: 14px;
+    line-height: 1.6;
     overflow-wrap: break-word;
 }
 
 
-/* =====================================================
-   4. CARDS DO DASHBOARD
-   Cartões que mostram os totais do sistema
-   ===================================================== */
+/* 4. CARTÕES DO PAINEL */
 
 .cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 22px;
+    gap: 20px;
 }
 
 .card {
-    background-color: white;
+    background-color: var(--branco);
     padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
-    border-left: 5px solid #2563a6;
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borda);
+    border-top: 3px solid var(--carmesim);
     min-width: 0;
-    margin-bottom: 22px;
-    overflow: hidden;
+    margin-bottom: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(60, 30, 42, 0.09);
 }
 
 .card h3 {
-    color: #64748b;
-    font-size: 16px;
-    margin-bottom: 15px;
+    color: var(--texto-secundario);
+    font-size: 14px;
+    font-weight: normal;
+    margin-bottom: 16px;
     overflow-wrap: break-word;
 }
 
 .card p {
-    color: #123b66;
-    font-size: 32px;
+    color: var(--carmesim);
+    font-size: 34px;
     font-weight: bold;
     overflow-wrap: break-word;
 }
 
 
-/* =====================================================
-   5. FORMULÁRIOS
-   Campos de cadastro e edição
-   ===================================================== */
+/* 5. FORMULÁRIOS */
 
 form {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 11px;
     width: 100%;
+    background-color: var(--branco);
+    padding: 25px;
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    margin-bottom: 25px;
 }
 
 form label {
-    color: #334155;
-    font-size: 14px;
+    color: var(--texto);
+    font-size: 13px;
     font-weight: bold;
     overflow-wrap: break-word;
 }
@@ -196,84 +296,96 @@ form textarea {
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    padding: 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 7px;
-    font-size: 15px;
+    padding: 12px 14px;
+    border: 1px solid #DED5D9;
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--texto);
     outline: none;
-    background-color: #fff;
+    background-color: #FFFEFE;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Destaque do campo que está sendo preenchido */
+form input::placeholder,
+form textarea::placeholder {
+    color: #AAA1A6;
+}
 
 form input:focus,
 form select:focus,
 form textarea:focus {
-    border-color: #2563a6;
-    box-shadow: 0 0 0 3px rgba(37, 99, 166, 0.12);
+    border-color: var(--carmesim);
+    box-shadow: 0 0 0 3px rgba(139, 30, 63, 0.10);
 }
 
-/* Botões principais dos formulários */
+form textarea {
+    resize: vertical;
+    min-height: 90px;
+}
+
+/* Botões dos formulários */
 
 form button {
     width: fit-content;
     max-width: 100%;
     padding: 12px 20px;
     margin-top: 10px;
-    background-color: #2563a6;
-    color: white;
+    background-color: var(--carmesim);
+    color: var(--branco);
     border: none;
-    border-radius: 7px;
-    font-size: 15px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
     overflow-wrap: break-word;
     transition: background-color 0.2s, transform 0.2s;
 }
 
 form button:hover {
-    background-color: #123b66;
+    background-color: var(--carmesim-escuro);
     transform: translateY(-1px);
 }
 
-/* Botão de cancelar edição */
+form button:active {
+    transform: scale(0.98);
+}
+
+/* Botões de cancelar */
 
 form button#botao-cancelar,
 form button#botao-cancelar-cao,
 form button#botao-cancelar-hospedagem {
-    background-color: #e2e8f0;
-    color: #334155;
+    background-color: #F0EAED;
+    color: #5F4B54;
 }
 
 form button#botao-cancelar:hover,
 form button#botao-cancelar-cao:hover,
 form button#botao-cancelar-hospedagem:hover {
-    background-color: #cbd5e1;
+    background-color: #E5D9DF;
 }
 
 
-/* =====================================================
-   6. MENSAGENS
-   Textos de confirmação e de erro dos formulários
-   ===================================================== */
+/* 6. MENSAGENS */
 
 #mensagem-tutor,
 #mensagem-cao,
 #mensagem-hospedagem {
-    margin-top: 15px;
-    font-size: 14px;
+    margin-top: 12px;
+    font-size: 13px;
     overflow-wrap: break-word;
 }
 
 
-/* =====================================================
-   7. TABELAS
-   Exibição dos tutores, cães e hospedagens
-   ===================================================== */
+/* 7. TABELAS */
 
 .tabela-container {
     width: 100%;
     overflow-x: auto;
+    background-color: var(--branco);
+    border: 1px solid var(--borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
 }
 
 table {
@@ -285,33 +397,32 @@ table {
 
 th,
 td {
-    padding: 14px 12px;
-    border-bottom: 1px solid #e2e8f0;
-    font-size: 14px;
+    padding: 15px 14px;
+    border-bottom: 1px solid var(--borda);
+    font-size: 13px;
     overflow-wrap: break-word;
 }
 
 th {
-    background-color: #f1f5f9;
-    color: #123b66;
+    background-color: #F8F1F4;
+    color: var(--carmesim-escuro);
     font-weight: bold;
 }
 
 td {
-    color: #475569;
+    color: #5E565B;
+}
+
+tr:last-child td {
+    border-bottom: none;
 }
 
 tr:hover td {
-    background-color: #f8fafc;
+    background-color: #FCF8FA;
 }
 
 
-/* =====================================================
-   8. BOTÕES DE AÇÃO DAS TABELAS
-   Estilo padronizado para Editar e Excluir
-   ===================================================== */
-
-/* Organização dos botões dentro das células */
+/* 8. BOTÕES DE AÇÃO DAS TABELAS */
 
 td .btn-acao {
     display: inline-flex;
@@ -321,65 +432,65 @@ td .btn-acao {
     margin: 3px;
     border: none;
     border-radius: 7px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
     cursor: pointer;
-    transition:
-        background-color 0.2s,
-        color 0.2s,
-        transform 0.2s,
-        box-shadow 0.2s;
+    transition: 0.2s ease;
 }
 
-/* Botão Editar */
+/* Editar */
 
 td .btn-editar {
-    background-color: #dbeafe;
-    color: #1d4e89;
+    background-color: #F8E9EE;
+    color: var(--carmesim);
 }
 
 td .btn-editar:hover {
-    background-color: #bfdbfe;
-    box-shadow: 0 2px 6px rgba(29, 78, 137, 0.15);
+    background-color: #EED1DB;
     transform: translateY(-1px);
 }
 
-/* Botão Excluir */
+/* Excluir */
 
 td .btn-excluir {
-    background-color: #fee2e2;
-    color: #b42318;
+    background-color: #FDECEC;
+    color: var(--erro);
 }
 
 td .btn-excluir:hover {
-    background-color: #fecaca;
-    box-shadow: 0 2px 6px rgba(180, 35, 24, 0.12);
+    background-color: #F9D3D3;
     transform: translateY(-1px);
 }
-
-/* Efeito ao clicar */
 
 td .btn-acao:active {
     transform: scale(0.97);
 }
 
 
-/* =====================================================
-   9. RESPONSIVIDADE
-   Adapta o sistema para telas menores
-   ===================================================== */
+/* 9. RESPONSIVIDADE */
+
+@media (max-width: 900px) {
+
+    .conteudo {
+        padding: 30px 24px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
 
 @media (max-width: 768px) {
 
     .sidebar {
-        width: 190px;
-        padding: 25px 12px;
+        width: 210px;
+        padding: 24px 13px;
     }
 
     .conteudo {
-        margin-left: 190px;
-        width: calc(100% - 190px);
-        padding: 25px 15px;
+        margin-left: 210px;
+        width: calc(100% - 210px);
+        padding: 25px 18px;
     }
 
     .cards {
@@ -387,38 +498,262 @@ td .btn-acao:active {
     }
 
     .card {
-        padding: 18px;
+        padding: 20px;
+    }
+
+    .logo-texto h2 {
+        font-size: 15px;
     }
 }
 
 @media (max-width: 500px) {
 
     .sidebar {
-        width: 130px;
-        padding: 20px 8px;
+        width: 145px;
+        padding: 18px 8px;
     }
 
-    .sidebar h2 {
-        font-size: 16px;
+    .logo {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 5px 5px 22px;
+        gap: 8px;
     }
 
-    .sidebar nav a {
-        padding: 12px 8px;
+    .logo-icone {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        font-size: 14px;
+    }
+
+    .logo-texto h2 {
         font-size: 13px;
     }
 
+    .logo-texto span {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    .menu-titulo {
+        font-size: 8px;
+        padding: 10px 5px;
+    }
+
+    .sidebar nav {
+        gap: 5px;
+    }
+
+    .sidebar nav a {
+        padding: 11px 7px;
+        gap: 6px;
+        font-size: 12px;
+    }
+
+    .sidebar nav a.ativo {
+        padding-left: 4px;
+    }
+
+    .menu-icone {
+        width: 17px;
+        font-size: 15px;
+    }
+
+    .sidebar-rodape {
+        font-size: 9px;
+        padding-left: 4px;
+    }
+
     .conteudo {
-        margin-left: 130px;
-        width: calc(100% - 130px);
-        padding: 20px 10px;
+        margin-left: 145px;
+        width: calc(100% - 145px);
+        padding: 22px 12px;
+    }
+
+    header {
+        margin-bottom: 24px;
     }
 
     header h1 {
         font-size: 23px;
     }
 
+    header p {
+        font-size: 13px;
+    }
+
+    .card {
+        padding: 17px;
+    }
+
+    .card p {
+        font-size: 28px;
+    }
+
+    form {
+        padding: 17px;
+    }
+
+    form button {
+        width: 100%;
+    }
+
     td .btn-acao {
         padding: 7px 9px;
-        font-size: 12px;
+        font-size: 11px;
+    }
+}
+
+
+/* Ícones vetoriais do menu */
+
+.menu-icone {
+    width: 21px;
+    height: 21px;
+    flex-shrink: 0;
+}
+
+.menu-icone svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Apresentação do painel */
+
+.apresentacao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    background: linear-gradient(120deg, #5C142B, #8B1E3F);
+    color: white;
+    padding: 35px;
+    border-radius: 14px;
+    margin: 10px 0 30px;
+    overflow: hidden;
+}
+
+.apresentacao-conteudo {
+    max-width: 600px;
+}
+
+.apresentacao .pagina-subtitulo {
+    color: #EBC6D3;
+}
+
+.apresentacao h2 {
+    font-size: 25px;
+    line-height: 1.4;
+    margin-bottom: 12px;
+}
+
+.apresentacao p {
+    color: #F2DDE4;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.apresentacao-marca {
+    width: 110px;
+    height: 110px;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 35px;
+    font-weight: bold;
+    color: white;
+    background: rgba(255,255,255,.08);
+}
+
+/* Central de gerenciamento */
+
+.secao-informacoes {
+    margin-top: 30px;
+}
+
+.secao-cabecalho {
+    margin-bottom: 18px;
+}
+
+.secao-cabecalho h2 {
+    font-size: 20px;
+    color: var(--carmesim-escuro);
+}
+
+.atalhos {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.atalho {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    text-align: left;
+    padding: 22px;
+    border: 1px solid var(--borda);
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: .2s ease;
+    color: var(--texto);
+}
+
+.atalho:hover {
+    border-color: var(--carmesim);
+    transform: translateY(-3px);
+    box-shadow: var(--sombra);
+}
+
+.atalho-icone {
+    width: 43px;
+    height: 43px;
+    min-width: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--carmesim-claro);
+    color: var(--carmesim);
+    border-radius: 10px;
+}
+
+.atalho-icone svg {
+    width: 23px;
+    height: 23px;
+}
+
+.atalho h3 {
+    font-size: 15px;
+    margin-bottom: 7px;
+}
+
+.atalho p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--texto-secundario);
+}
+
+@media (max-width: 900px) {
+    .atalhos {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .apresentacao {
+        padding: 22px;
+    }
+
+    .apresentacao h2 {
+        font-size: 20px;
+    }
+
+    .apresentacao-marca {
+        display: none;
     }
 }

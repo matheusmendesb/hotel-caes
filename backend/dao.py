@@ -17,7 +17,6 @@ def cadastrar_tutor(tutor):
             VALUES (%s, %s, %s, %s)
         """
 
-        # Organiza os valores na mesma ordem das colunas do INSERT.
         valores = (
             tutor.nome,
             tutor.telefone,
@@ -29,20 +28,26 @@ def cadastrar_tutor(tutor):
         conexao.commit()
 
     finally:
-        # Fecha o cursor e a conexão mesmo se ocorrer algum erro.
         cursor.close()
         conexao.close()
 
 
-# Retorna todos os tutores cadastrados.
+# Retorna todos os tutores com o endereço no nome esperado pelo frontend.
 def listar_tutores():
     conexao = conectar()
-
-    # dictionary=True faz cada registro ser retornado como um dicionário.
     cursor = conexao.cursor(dictionary=True)
 
     try:
-        cursor.execute("SELECT * FROM tutor")
+        cursor.execute("""
+            SELECT
+                id_tutor,
+                nome,
+                telefone,
+                email,
+                morada AS endereco
+            FROM tutor
+        """)
+
         return cursor.fetchall()
 
     finally:
@@ -73,7 +78,6 @@ def editar_tutor(id_tutor, tutor):
         cursor.execute(sql, valores)
         conexao.commit()
 
-        # Retorna True se algum registro foi alterado.
         return cursor.rowcount > 0
 
     finally:
@@ -94,7 +98,6 @@ def excluir_tutor(id_tutor):
 
         conexao.commit()
 
-        # Retorna True se algum tutor foi excluído.
         return cursor.rowcount > 0
 
     finally:
@@ -106,7 +109,6 @@ def excluir_tutor(id_tutor):
 # OPERAÇÕES DE CÃES
 # ==========================================================
 
-# Cadastra um novo cão no banco de dados.
 def cadastrar_cao(cao):
     conexao = conectar()
     cursor = conexao.cursor()
@@ -115,20 +117,12 @@ def cadastrar_cao(cao):
         sql = """
             INSERT INTO cao
             (
-                nome,
-                raca,
-                sexo,
-                peso_atual,
-                porte,
-                idade,
-                castrado,
-                observacoes,
-                tutor_id
+                nome, raca, sexo, peso_atual, porte,
+                idade, castrado, observacoes, tutor_id
             )
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
 
-        # Os nove valores correspondem exatamente às nove colunas.
         valores = (
             cao.nome,
             cao.raca,
@@ -149,7 +143,6 @@ def cadastrar_cao(cao):
         conexao.close()
 
 
-# Retorna todos os cães cadastrados.
 def listar_caes():
     conexao = conectar()
     cursor = conexao.cursor(dictionary=True)
@@ -163,7 +156,6 @@ def listar_caes():
         conexao.close()
 
 
-# Atualiza os dados de um cão pelo ID.
 def editar_cao(id_cao, cao):
     conexao = conectar()
     cursor = conexao.cursor()
@@ -206,7 +198,6 @@ def editar_cao(id_cao, cao):
         conexao.close()
 
 
-# Exclui um cão pelo ID.
 def excluir_cao(id_cao):
     conexao = conectar()
     cursor = conexao.cursor()
@@ -230,7 +221,6 @@ def excluir_cao(id_cao):
 # OPERAÇÕES DE HOSPEDAGENS
 # ==========================================================
 
-# Cadastra uma hospedagem vinculada a um cão.
 def cadastrar_hospedagem(hospedagem):
     conexao = conectar()
     cursor = conexao.cursor()
@@ -257,7 +247,6 @@ def cadastrar_hospedagem(hospedagem):
         conexao.close()
 
 
-# Retorna todas as hospedagens cadastradas.
 def listar_hospedagens():
     conexao = conectar()
     cursor = conexao.cursor(dictionary=True)
@@ -271,7 +260,6 @@ def listar_hospedagens():
         conexao.close()
 
 
-# Atualiza os dados de uma hospedagem pelo ID.
 def editar_hospedagem(id_hospedagem, hospedagem):
     conexao = conectar()
     cursor = conexao.cursor()
@@ -297,9 +285,6 @@ def editar_hospedagem(id_hospedagem, hospedagem):
         cursor.execute(sql, valores)
         conexao.commit()
 
-        # Confirma se a hospedagem existe.
-        # Essa consulta também permite retornar True quando os dados
-        # enviados são iguais aos dados que já estavam salvos.
         cursor.execute(
             "SELECT id_hospedagem FROM hospedagem WHERE id_hospedagem = %s",
             (id_hospedagem,)
@@ -312,7 +297,6 @@ def editar_hospedagem(id_hospedagem, hospedagem):
         conexao.close()
 
 
-# Exclui uma hospedagem pelo ID.
 def excluir_hospedagem(id_hospedagem):
     conexao = conectar()
     cursor = conexao.cursor()

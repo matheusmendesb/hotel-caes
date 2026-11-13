@@ -1,3 +1,4 @@
+
 # Importa os recursos necessários do Flask para criar rotas,
 # receber dados enviados pelo frontend e servir arquivos.
 from flask import Flask, request, jsonify, send_from_directory
@@ -71,15 +72,15 @@ def consultar_tutores():
 def adicionar_tutor():
     dados = request.get_json()
 
-    # Cria um objeto Tutor com os dados recebidos.
+    # O frontend envia o endereço, mas a classe Tutor
+    # ainda utiliza o nome morada internamente.
     tutor = Tutor(
         dados["nome"],
         dados["telefone"],
         dados.get("email"),
-        dados.get("morada")
+        dados.get("endereco")
     )
 
-    # Envia o objeto para a função responsável pelo cadastro.
     cadastrar_tutor(tutor)
 
     return jsonify({"mensagem": "Tutor cadastrado!"}), 201
@@ -94,12 +95,11 @@ def atualizar_tutor(id_tutor):
         dados["nome"],
         dados["telefone"],
         dados.get("email"),
-        dados.get("morada")
+        dados.get("endereco")
     )
 
     atualizado = editar_tutor(id_tutor, tutor)
 
-    # Retorna erro caso o ID informado não exista.
     if not atualizado:
         return jsonify({"erro": "Tutor não encontrado!"}), 404
 
@@ -139,7 +139,6 @@ def consultar_caes():
 def adicionar_cao():
     dados = request.get_json()
 
-    # Cria um objeto Cao com os dados recebidos.
     cao = Cao(
         dados["nome"],
         dados["raca"],
@@ -204,21 +203,18 @@ def remover_cao(id_cao):
 # FUNÇÕES AUXILIARES DE HOSPEDAGEM
 # ==========================================================
 
-# Converte os dados de uma hospedagem para um formato
-# que pode ser enviado corretamente em uma resposta JSON.
+# Converte os dados de uma hospedagem para um formato JSON.
 def formatar_hospedagem(hospedagem):
     return {
         "id_hospedagem": hospedagem["id_hospedagem"],
         "cao_id": hospedagem["cao_id"],
         "peso_registrado": float(hospedagem["peso_registrado"]),
 
-        # Converte a data de entrada para texto no formato ISO.
         "data_entrada": hospedagem["data_entrada"].isoformat(
             sep="T",
             timespec="seconds"
         ),
 
-        # Se não existir data de saída, retorna None.
         "data_saida": (
             hospedagem["data_saida"].isoformat(
                 sep="T",
@@ -235,7 +231,6 @@ def criar_objeto_hospedagem(dados):
     cao_id = int(dados["cao_id"])
     peso_registrado = float(dados["peso_registrado"])
 
-    # Converte as datas recebidas em objetos datetime.
     data_entrada = datetime.fromisoformat(dados["data_entrada"])
 
     data_saida_texto = dados.get("data_saida")
@@ -245,11 +240,9 @@ def criar_objeto_hospedagem(dados):
         else None
     )
 
-    # O peso precisa ser maior que zero.
     if peso_registrado <= 0:
         raise ValueError("O peso registrado deve ser maior que zero.")
 
-    # A saída não pode acontecer antes da entrada.
     if data_saida and data_saida < data_entrada:
         raise ValueError(
             "A data e horário de saída não podem ser anteriores à entrada."
@@ -267,7 +260,7 @@ def criar_objeto_hospedagem(dados):
 # ROTAS DE HOSPEDAGENS
 # ==========================================================
 
-# GET: consulta todas as hospedagens e prepara os dados para JSON.
+# GET: consulta todas as hospedagens.
 @app.route("/hospedagens", methods=["GET"])
 def consultar_hospedagens():
     hospedagens = listar_hospedagens()
@@ -291,13 +284,11 @@ def adicionar_hospedagem():
             "mensagem": "Hospedagem cadastrada com sucesso!"
         }), 201
 
-    # Trata dados ausentes, tipos incorretos e datas inválidas.
     except (KeyError, TypeError, ValueError):
         return jsonify({
             "erro": "Preencha corretamente o cão, o peso e a data e horário de entrada."
         }), 400
 
-    # Trata problemas com as restrições do banco de dados.
     except IntegrityError:
         return jsonify({
             "erro": "Não foi possível cadastrar a hospedagem. Verifique se o cão existe e se as datas são válidas."
@@ -351,19 +342,14 @@ def remover_hospedagem(id_hospedagem):
 # INICIALIZAÇÃO DO SISTEMA
 # ==========================================================
 
-# Este bloco só é executado quando o arquivo é iniciado diretamente
-# pelo comando python -m backend.app.
 if __name__ == "__main__":
     try:
-        # Testa a conexão com o banco antes de iniciar o servidor.
         conexao = conectar()
         conexao.close()
 
         print("Banco de dados conectado!")
 
-        # Inicia o servidor Flask em modo de depuração.
         app.run(debug=True)
 
     except Exception as erro:
-        # Exibe o erro caso não seja possível conectar ao banco.
         print("Erro ao conectar:", erro)

@@ -1,12 +1,9 @@
-// Armazena temporariamente os tutores recebidos do backend.
+
+// Armazena os tutores recebidos do backend.
 let tutoresCadastrados = [];
 
 
-// ==========================================================
-// LISTAR TUTORES
-// ==========================================================
-
-// Consulta os tutores e apresenta os dados na tabela.
+// Lista os tutores na tabela.
 export async function listarTutores() {
     const tabela = document.querySelector("#lista-tutores");
 
@@ -20,7 +17,6 @@ export async function listarTutores() {
         tutoresCadastrados = await resposta.json();
         tabela.innerHTML = "";
 
-        // Informa quando ainda não existem tutores cadastrados.
         if (tutoresCadastrados.length === 0) {
             tabela.innerHTML = `
                 <tr>
@@ -30,7 +26,6 @@ export async function listarTutores() {
             return;
         }
 
-        // Cria uma linha na tabela para cada tutor.
         tutoresCadastrados.forEach(tutor => {
             tabela.innerHTML += `
                 <tr>
@@ -38,21 +33,15 @@ export async function listarTutores() {
                     <td>${tutor.nome}</td>
                     <td>${tutor.telefone}</td>
                     <td>${tutor.email || "-"}</td>
-                    <td>${tutor.morada || "-"}</td>
+                    <td>${tutor.endereco || "-"}</td>
                     <td>
-                        <button
-                            type="button"
-                            class="btn-acao btn-editar"
-                            onclick="editarTutor(${tutor.id_tutor})"
-                        >
+                        <button type="button" class="btn-acao btn-editar"
+                            onclick="editarTutor(${tutor.id_tutor})">
                             Editar
                         </button>
 
-                        <button
-                            type="button"
-                            class="btn-acao btn-excluir"
-                            onclick="excluirTutor(${tutor.id_tutor})"
-                        >
+                        <button type="button" class="btn-acao btn-excluir"
+                            onclick="excluirTutor(${tutor.id_tutor})">
                             Excluir
                         </button>
                     </td>
@@ -71,28 +60,22 @@ export async function listarTutores() {
 }
 
 
-// ==========================================================
-// CADASTRAR OU ATUALIZAR TUTOR
-// ==========================================================
-
-// Envia os dados do formulário para cadastrar ou atualizar um tutor.
+// Cadastra um tutor novo ou atualiza um existente.
 export async function salvarTutor(event) {
     event.preventDefault();
 
     const idTutor = document.querySelector("#id-tutor").value;
 
-    // Reúne os valores preenchidos no formulário.
     const tutor = {
         nome: document.querySelector("#nome").value,
         telefone: document.querySelector("#telefone").value,
         email: document.querySelector("#email").value,
-        morada: document.querySelector("#morada").value
+        endereco: document.querySelector("#endereco").value
     };
 
     const mensagem = document.querySelector("#mensagem-tutor");
 
     try {
-        // Se existe ID, atualiza; caso contrário, cadastra.
         const resposta = await fetch(
             idTutor ? `/tutores/${idTutor}` : "/tutores",
             {
@@ -112,11 +95,7 @@ export async function salvarTutor(event) {
 
         mensagem.textContent = resultado.mensagem;
 
-        // Limpa o formulário e encerra o modo de edição.
-        document.querySelector("#form-tutor").reset();
         cancelarEdicao();
-
-        // Atualiza a tabela com os dados mais recentes.
         await listarTutores();
 
     } catch (erro) {
@@ -125,11 +104,7 @@ export async function salvarTutor(event) {
 }
 
 
-// ==========================================================
-// EDITAR TUTOR
-// ==========================================================
-
-// Preenche o formulário com os dados do tutor selecionado.
+// Coloca os dados do tutor selecionado no formulário.
 export function editarTutor(idTutor) {
     const tutor = tutoresCadastrados.find(
         item => Number(item.id_tutor) === Number(idTutor)
@@ -141,15 +116,13 @@ export function editarTutor(idTutor) {
     document.querySelector("#nome").value = tutor.nome;
     document.querySelector("#telefone").value = tutor.telefone;
     document.querySelector("#email").value = tutor.email || "";
-    document.querySelector("#morada").value = tutor.morada || "";
+    document.querySelector("#endereco").value = tutor.endereco || "";
 
-    // Altera os textos e exibe o botão de cancelar.
     document.querySelector("#titulo-formulario").textContent = "Editar tutor";
     document.querySelector("#botao-cadastrar").textContent = "Salvar alterações";
     document.querySelector("#botao-cancelar").hidden = false;
     document.querySelector("#mensagem-tutor").textContent = "";
 
-    // Leva o usuário até o formulário.
     document.querySelector("#form-tutor").scrollIntoView({
         behavior: "smooth",
         block: "start"
@@ -157,11 +130,7 @@ export function editarTutor(idTutor) {
 }
 
 
-// ==========================================================
-// CANCELAR EDIÇÃO
-// ==========================================================
-
-// Limpa os campos e restaura o formulário para cadastro.
+// Limpa o formulário e encerra a edição.
 export function cancelarEdicao() {
     document.querySelector("#form-tutor").reset();
     document.querySelector("#id-tutor").value = "";
@@ -172,17 +141,13 @@ export function cancelarEdicao() {
 }
 
 
-// ==========================================================
-// EXCLUIR TUTOR
-// ==========================================================
-
-// Exclui um tutor após confirmação do usuário.
+// Exclui um tutor após a confirmação.
 export async function excluirTutor(idTutor) {
-    const confirmar = confirm(
-        `Tem certeza que deseja excluir o tutor de ID ${idTutor}?`
-    );
+    if (!confirm(`Tem certeza que deseja excluir o tutor de ID ${idTutor}?`)) {
+        return;
+    }
 
-    if (!confirmar) return;
+    const mensagem = document.querySelector("#mensagem-tutor");
 
     try {
         const resposta = await fetch(`/tutores/${idTutor}`, {
@@ -195,13 +160,10 @@ export async function excluirTutor(idTutor) {
             throw new Error(resultado.erro || "Erro ao excluir tutor.");
         }
 
-        document.querySelector("#mensagem-tutor").textContent =
-            resultado.mensagem;
-
-        // Atualiza a tabela após a exclusão.
+        mensagem.textContent = resultado.mensagem;
         await listarTutores();
 
     } catch (erro) {
-        document.querySelector("#mensagem-tutor").textContent = erro.message;
+        mensagem.textContent = erro.message;
     }
 }

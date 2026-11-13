@@ -1,7 +1,7 @@
-// Importa a função que atualiza os números do Dashboard.
+
+// Importa as funções utilizadas em cada página.
 import { atualizarDashboard } from "./dashboard.js";
 
-// Importa as funções responsáveis pela página de tutores.
 import {
     listarTutores,
     salvarTutor,
@@ -10,7 +10,6 @@ import {
     excluirTutor
 } from "./tutores.js";
 
-// Importa as funções responsáveis pela página de cães.
 import {
     carregarTutoresNoSelect,
     listarCaes,
@@ -20,7 +19,6 @@ import {
     excluirCao
 } from "./caes.js";
 
-// Importa as funções responsáveis pela página de hospedagens.
 import {
     inicializarHospedagens,
     editarHospedagem,
@@ -28,69 +26,66 @@ import {
 } from "./hospedagens.js";
 
 
-// ==========================================================
-// ELEMENTOS PRINCIPAIS
-// ==========================================================
-
-// Seleciona a área onde o conteúdo das páginas será exibido.
+// Elementos principais da página.
 const conteudo = document.querySelector(".conteudo");
-
-// Seleciona todos os links do menu lateral.
 const linksMenu = document.querySelectorAll(".sidebar nav a");
 
 
-// ==========================================================
-// FUNÇÕES DOS BOTÕES
-// ==========================================================
-
-// Disponibiliza as funções no objeto window para que os atributos
-// onclick dos botões criados dinamicamente consigam acessá-las.
+// Disponibiliza as funções de edição e exclusão para os botões das tabelas.
 window.editarTutor = editarTutor;
 window.excluirTutor = excluirTutor;
-
 window.editarCao = editarCao;
 window.excluirCao = excluirCao;
-
 window.editarHospedagem = editarHospedagem;
 window.excluirHospedagem = excluirHospedagem;
 
 
-// ==========================================================
-// CONTEÚDO DAS PÁGINAS
-// ==========================================================
-
-// Cada propriedade contém o HTML que será exibido
-// quando o usuário selecionar uma página no menu.
+// Conteúdo HTML de cada página do sistema.
 const paginas = {
 
-    // Página inicial com os totais do sistema.
     Dashboard: `
         <header>
-            <h1>Dashboard</h1>
-            <p>Bem-vindo ao sistema do Hotel para Cães.</p>
+            <span class="pagina-subtitulo">VISÃO GERAL</span>
+            <h1>Painel inicial</h1>
+            <p>Acompanhe os cadastros e a movimentação do Hotel Carmesim.</p>
         </header>
 
         <section class="cards">
             <div class="card">
-                <h3>Tutores</h3>
+                <h3>Tutores cadastrados</h3>
                 <p id="total-tutores">0</p>
             </div>
 
             <div class="card">
-                <h3>Cães</h3>
+                <h3>Cães cadastrados</h3>
                 <p id="total-caes">0</p>
             </div>
 
             <div class="card">
-                <h3>Hospedagens</h3>
+                <h3>Hospedagens registradas</h3>
                 <p id="total-hospedagens">0</p>
+            </div>
+        </section>
+
+        <section class="apresentacao">
+            <div class="apresentacao-conteudo">
+                <span class="pagina-subtitulo">HOTEL CARMESIM</span>
+
+                <h2>Gestão organizada, cuidado em cada detalhe.</h2>
+
+                <p>
+                    Um ambiente centralizado para administrar tutores,
+                    cães e hospedagens, facilitando o acompanhamento
+                    das atividades do hotel.
+                </p>
             </div>
         </section>
     `,
 
-    // Página de cadastro, edição e consulta de tutores.
+    // Formulário e tabela de tutores.
     Tutores: `
         <header>
+            <span class="pagina-subtitulo">CADASTROS</span>
             <h1>Tutores</h1>
             <p>Gerenciamento dos tutores cadastrados.</p>
         </header>
@@ -110,8 +105,8 @@ const paginas = {
                 <label>E-mail</label>
                 <input type="email" id="email">
 
-                <label>Morada</label>
-                <input type="text" id="morada">
+                <label>Endereço</label>
+                <input type="text" id="endereco">
 
                 <button type="submit" id="botao-cadastrar">
                     Cadastrar tutor
@@ -136,7 +131,7 @@ const paginas = {
                             <th>Nome</th>
                             <th>Telefone</th>
                             <th>E-mail</th>
-                            <th>Morada</th>
+                            <th>Endereço</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -151,9 +146,10 @@ const paginas = {
         </section>
     `,
 
-    // Página de cadastro, edição e consulta de cães.
+    // Formulário e tabela de cães.
     Cães: `
         <header>
+            <span class="pagina-subtitulo">CADASTROS</span>
             <h1>Cães</h1>
             <p>Gerenciamento dos cães cadastrados.</p>
         </header>
@@ -249,9 +245,10 @@ const paginas = {
         </section>
     `,
 
-    // Página de cadastro, edição e consulta de hospedagens.
+    // Formulário e tabela de hospedagens.
     Hospedagens: `
         <header>
+            <span class="pagina-subtitulo">OPERAÇÃO</span>
             <h1>Hospedagens</h1>
             <p>Controle de entrada e saída dos cães.</p>
         </header>
@@ -268,36 +265,20 @@ const paginas = {
                 </select>
 
                 <label>Peso registrado na entrada (kg)</label>
-                <input
-                    type="number"
-                    id="peso-hospedagem"
-                    step="0.01"
-                    min="0.01"
-                    required
-                >
+                <input type="number" id="peso-hospedagem"
+                    step="0.01" min="0.01" required>
 
                 <label>Data e horário de entrada</label>
-                <input
-                    type="datetime-local"
-                    id="data-entrada"
-                    required
-                >
+                <input type="datetime-local" id="data-entrada" required>
 
                 <label>Data e horário de saída</label>
-                <input
-                    type="datetime-local"
-                    id="data-saida"
-                >
+                <input type="datetime-local" id="data-saida">
 
                 <button type="submit" id="botao-salvar-hospedagem">
                     Cadastrar hospedagem
                 </button>
 
-                <button
-                    type="button"
-                    id="botao-cancelar-hospedagem"
-                    hidden
-                >
+                <button type="button" id="botao-cancelar-hospedagem" hidden>
                     Cancelar edição
                 </button>
             </form>
@@ -334,108 +315,96 @@ const paginas = {
 };
 
 
-// ==========================================================
-// IDENTIFICAR A PÁGINA
-// ==========================================================
-
-// Padroniza os nomes usados no menu para identificar a página correta.
-// "Inicio", "Início" e "Dashboard" abrem a mesma página.
+// Identifica qual página deve ser aberta.
 function identificarPagina(nome) {
-    if (nome === "Inicio" || nome === "Início" || nome === "Dashboard") {
+    const nomeNormalizado = nome.trim().toLowerCase();
+
+    if (
+        nomeNormalizado === "inicio" ||
+        nomeNormalizado === "início" ||
+        nomeNormalizado === "dashboard"
+    ) {
         return "Dashboard";
     }
+
+    if (nomeNormalizado === "tutores") return "Tutores";
+    if (nomeNormalizado === "cães" || nomeNormalizado === "caes") return "Cães";
+    if (nomeNormalizado === "hospedagens") return "Hospedagens";
 
     return nome;
 }
 
 
-// ==========================================================
-// NAVEGAÇÃO ENTRE PÁGINAS
-// ==========================================================
+// Obtém o nome do menu sem incluir o texto dos ícones.
+function obterNomeDoMenu(link) {
+    const texto = link.querySelector(".menu-label")
+        || link.querySelector("span:last-child");
 
-// Substitui o conteúdo principal pelo HTML da página selecionada.
+    return texto ? texto.textContent.trim() : link.textContent.trim();
+}
+
+
+// Abre a página escolhida e carrega seus dados.
 function abrirPagina(nome) {
     const pagina = identificarPagina(nome);
 
-    // Não faz nada se o nome não corresponder a uma página existente.
     if (!paginas[pagina]) return;
 
     conteudo.innerHTML = paginas[pagina];
 
-    // Atualiza o destaque do item selecionado no menu.
+    // Atualiza o destaque do menu.
     linksMenu.forEach(link => {
-        link.classList.toggle(
-            "ativo",
-            identificarPagina(link.textContent.trim()) === pagina
-        );
+        const nomeMenu = identificarPagina(obterNomeDoMenu(link));
+        link.classList.toggle("ativo", nomeMenu === pagina);
     });
 
-
-    // Atualiza os totais quando o Dashboard é aberto.
+    // Carrega os indicadores do painel inicial.
     if (pagina === "Dashboard") {
         atualizarDashboard();
     }
 
-
-    // Inicializa os eventos e os dados da página de tutores.
+    // Carrega tutores e configura os botões do formulário.
     if (pagina === "Tutores") {
         listarTutores();
 
         document.querySelector("#form-tutor").addEventListener(
-            "submit",
-            salvarTutor
+            "submit", salvarTutor
         );
 
         document.querySelector("#botao-cancelar").addEventListener(
-            "click",
-            cancelarEdicao
+            "click", cancelarEdicao
         );
     }
 
-
-    // Inicializa os eventos e os dados da página de cães.
+    // Carrega cães, tutores e configura o formulário.
     if (pagina === "Cães") {
         carregarTutoresNoSelect();
         listarCaes();
 
         document.querySelector("#form-cao").addEventListener(
-            "submit",
-            salvarCao
+            "submit", salvarCao
         );
 
         document.querySelector("#botao-cancelar-cao").addEventListener(
-            "click",
-            cancelarEdicaoCao
+            "click", cancelarEdicaoCao
         );
     }
 
-
-    // Inicializa os eventos e os dados da página de hospedagens.
+    // Inicializa os dados e eventos das hospedagens.
     if (pagina === "Hospedagens") {
         inicializarHospedagens();
     }
 }
 
 
-// ==========================================================
-// CLIQUES DO MENU
-// ==========================================================
-
-// Adiciona um evento a cada link do menu lateral.
+// Configura a navegação do menu lateral.
 linksMenu.forEach(link => {
     link.addEventListener("click", function(event) {
-        // Evita que o navegador siga o link "#".
         event.preventDefault();
-
-        // Abre a página correspondente ao texto do link.
-        abrirPagina(this.textContent.trim());
+        abrirPagina(obterNomeDoMenu(this));
     });
 });
 
 
-// ==========================================================
-// ABRIR PÁGINA INICIAL
-// ==========================================================
-
-// Exibe o Dashboard assim que o sistema é carregado.
-abrirPagina("Inicio");
+// Abre o painel inicial ao iniciar o sistema.
+abrirPagina("Início");
