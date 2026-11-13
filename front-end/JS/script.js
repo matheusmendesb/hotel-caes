@@ -1,10 +1,69 @@
+// Importa a função que atualiza os números do Dashboard.
+import { atualizarDashboard } from "./dashboard.js";
 
+// Importa as funções responsáveis pela página de tutores.
+import {
+    listarTutores,
+    salvarTutor,
+    editarTutor,
+    cancelarEdicao,
+    excluirTutor
+} from "./tutores.js";
+
+// Importa as funções responsáveis pela página de cães.
+import {
+    carregarTutoresNoSelect,
+    listarCaes,
+    salvarCao,
+    editarCao,
+    cancelarEdicaoCao,
+    excluirCao
+} from "./caes.js";
+
+// Importa as funções responsáveis pela página de hospedagens.
+import {
+    inicializarHospedagens,
+    editarHospedagem,
+    excluirHospedagem
+} from "./hospedagens.js";
+
+
+// ==========================================================
+// ELEMENTOS PRINCIPAIS
+// ==========================================================
+
+// Seleciona a área onde o conteúdo das páginas será exibido.
 const conteudo = document.querySelector(".conteudo");
+
+// Seleciona todos os links do menu lateral.
 const linksMenu = document.querySelectorAll(".sidebar nav a");
 
-let tutoresCadastrados = [];
 
+// ==========================================================
+// FUNÇÕES DOS BOTÕES
+// ==========================================================
+
+// Disponibiliza as funções no objeto window para que os atributos
+// onclick dos botões criados dinamicamente consigam acessá-las.
+window.editarTutor = editarTutor;
+window.excluirTutor = excluirTutor;
+
+window.editarCao = editarCao;
+window.excluirCao = excluirCao;
+
+window.editarHospedagem = editarHospedagem;
+window.excluirHospedagem = excluirHospedagem;
+
+
+// ==========================================================
+// CONTEÚDO DAS PÁGINAS
+// ==========================================================
+
+// Cada propriedade contém o HTML que será exibido
+// quando o usuário selecionar uma página no menu.
 const paginas = {
+
+    // Página inicial com os totais do sistema.
     Dashboard: `
         <header>
             <h1>Dashboard</h1>
@@ -16,10 +75,12 @@ const paginas = {
                 <h3>Tutores</h3>
                 <p id="total-tutores">0</p>
             </div>
+
             <div class="card">
                 <h3>Cães</h3>
                 <p id="total-caes">0</p>
             </div>
+
             <div class="card">
                 <h3>Hospedagens</h3>
                 <p id="total-hospedagens">0</p>
@@ -27,6 +88,7 @@ const paginas = {
         </section>
     `,
 
+    // Página de cadastro, edição e consulta de tutores.
     Tutores: `
         <header>
             <h1>Tutores</h1>
@@ -89,249 +151,233 @@ const paginas = {
         </section>
     `,
 
+    // Página de cadastro, edição e consulta de cães.
     Cães: `
         <header>
             <h1>Cães</h1>
             <p>Gerenciamento dos cães cadastrados.</p>
         </header>
+
         <section class="card">
-            <h3>Cadastro de cães</h3>
-            <p>Em desenvolvimento.</p>
+            <h3 id="titulo-form-cao">Cadastrar cão</h3>
+
+            <form id="form-cao">
+                <input type="hidden" id="id-cao">
+
+                <label>Nome</label>
+                <input type="text" id="nome-cao" required>
+
+                <label>Raça</label>
+                <input type="text" id="raca-cao" required>
+
+                <label>Sexo</label>
+                <select id="sexo-cao" required>
+                    <option value="">Selecione</option>
+                    <option value="Macho">Macho</option>
+                    <option value="Fêmea">Fêmea</option>
+                </select>
+
+                <label>Peso atual (kg)</label>
+                <input type="number" id="peso-cao" step="0.01" min="0.01" required>
+
+                <label>Porte</label>
+                <select id="porte-cao" required>
+                    <option value="">Selecione</option>
+                    <option value="Pequeno">Pequeno</option>
+                    <option value="Médio">Médio</option>
+                    <option value="Grande">Grande</option>
+                </select>
+
+                <label>Idade (anos)</label>
+                <input type="number" id="idade-cao" min="0" step="1" required>
+
+                <label>Castrado?</label>
+                <select id="castrado-cao" required>
+                    <option value="">Selecione</option>
+                    <option value="true">Sim</option>
+                    <option value="false">Não</option>
+                </select>
+
+                <label>Observações</label>
+                <textarea id="observacoes-cao" rows="3"></textarea>
+
+                <label>Tutor responsável</label>
+                <select id="tutor-cao" required>
+                    <option value="">Carregando tutores...</option>
+                </select>
+
+                <button type="submit" id="botao-salvar-cao">
+                    Cadastrar cão
+                </button>
+
+                <button type="button" id="botao-cancelar-cao" hidden>
+                    Cancelar edição
+                </button>
+            </form>
+
+            <p id="mensagem-cao"></p>
+        </section>
+
+        <section class="card">
+            <h3>Cães cadastrados</h3>
+
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Raça</th>
+                            <th>Sexo</th>
+                            <th>Peso</th>
+                            <th>Porte</th>
+                            <th>Idade</th>
+                            <th>Castrado</th>
+                            <th>Observações</th>
+                            <th>Tutor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="lista-caes">
+                        <tr>
+                            <td colspan="11">Carregando cães...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     `,
 
+    // Página de cadastro, edição e consulta de hospedagens.
     Hospedagens: `
         <header>
             <h1>Hospedagens</h1>
-            <p>Gerenciamento das hospedagens.</p>
+            <p>Controle de entrada e saída dos cães.</p>
         </header>
+
         <section class="card">
-            <h3>Controle de hospedagens</h3>
-            <p>Em desenvolvimento.</p>
+            <h3 id="titulo-form-hospedagem">Cadastrar hospedagem</h3>
+
+            <form id="form-hospedagem">
+                <input type="hidden" id="id-hospedagem">
+
+                <label>Cão</label>
+                <select id="cao-hospedagem" required>
+                    <option value="">Carregando cães...</option>
+                </select>
+
+                <label>Peso registrado na entrada (kg)</label>
+                <input
+                    type="number"
+                    id="peso-hospedagem"
+                    step="0.01"
+                    min="0.01"
+                    required
+                >
+
+                <label>Data e horário de entrada</label>
+                <input
+                    type="datetime-local"
+                    id="data-entrada"
+                    required
+                >
+
+                <label>Data e horário de saída</label>
+                <input
+                    type="datetime-local"
+                    id="data-saida"
+                >
+
+                <button type="submit" id="botao-salvar-hospedagem">
+                    Cadastrar hospedagem
+                </button>
+
+                <button
+                    type="button"
+                    id="botao-cancelar-hospedagem"
+                    hidden
+                >
+                    Cancelar edição
+                </button>
+            </form>
+
+            <p id="mensagem-hospedagem"></p>
+        </section>
+
+        <section class="card">
+            <h3>Hospedagens cadastradas</h3>
+
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cão</th>
+                            <th>Peso registrado</th>
+                            <th>Entrada</th>
+                            <th>Saída</th>
+                            <th>Situação</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="lista-hospedagens">
+                        <tr>
+                            <td colspan="7">Carregando hospedagens...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     `
 };
 
 
-// DASHBOARD
+// ==========================================================
+// IDENTIFICAR A PÁGINA
+// ==========================================================
 
-async function atualizarDashboard() {
-    try {
-        const [resTutores, resCaes, resHospedagens] = await Promise.all([
-            fetch("/tutores"),
-            fetch("/caes"),
-            fetch("/hospedagens")
-        ]);
-
-        if (!resTutores.ok || !resCaes.ok || !resHospedagens.ok) {
-            throw new Error("Erro ao consultar os dados.");
-        }
-
-        const tutores = await resTutores.json();
-        const caes = await resCaes.json();
-        const hospedagens = await resHospedagens.json();
-
-        document.querySelector("#total-tutores").textContent = tutores.length;
-        document.querySelector("#total-caes").textContent = caes.length;
-        document.querySelector("#total-hospedagens").textContent = hospedagens.length;
-
-    } catch (erro) {
-        console.error("Erro ao atualizar dashboard:", erro);
+// Padroniza os nomes usados no menu para identificar a página correta.
+// "Inicio", "Início" e "Dashboard" abrem a mesma página.
+function identificarPagina(nome) {
+    if (nome === "Inicio" || nome === "Início" || nome === "Dashboard") {
+        return "Dashboard";
     }
+
+    return nome;
 }
 
 
-// CONSULTAR TUTORES
+// ==========================================================
+// NAVEGAÇÃO ENTRE PÁGINAS
+// ==========================================================
 
-async function listarTutores() {
-    const tabela = document.querySelector("#lista-tutores");
+// Substitui o conteúdo principal pelo HTML da página selecionada.
+function abrirPagina(nome) {
+    const pagina = identificarPagina(nome);
 
-    try {
-        const resposta = await fetch("/tutores");
-
-        if (!resposta.ok) {
-            throw new Error("Erro ao consultar tutores.");
-        }
-
-        tutoresCadastrados = await resposta.json();
-
-        tabela.innerHTML = "";
-
-        if (tutoresCadastrados.length === 0) {
-            tabela.innerHTML = `
-                <tr>
-                    <td colspan="6">Nenhum tutor cadastrado.</td>
-                </tr>
-            `;
-            return;
-        }
-
-        tutoresCadastrados.forEach(tutor => {
-            tabela.innerHTML += `
-                <tr>
-                    <td>${tutor.id_tutor}</td>
-                    <td>${tutor.nome}</td>
-                    <td>${tutor.telefone}</td>
-                    <td>${tutor.email || "-"}</td>
-                    <td>${tutor.morada || "-"}</td>
-                    <td>
-                        <button type="button"
-                            onclick="editarTutor(${tutor.id_tutor})">
-                            Editar
-                        </button>
-
-                        <button type="button"
-                            onclick="excluirTutor(${tutor.id_tutor})">
-                            Excluir
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-
-    } catch (erro) {
-        tabela.innerHTML = `
-            <tr>
-                <td colspan="6">Erro ao carregar tutores.</td>
-            </tr>
-        `;
-        console.error(erro);
-    }
-}
-
-
-// CADASTRAR OU EDITAR TUTOR
-
-async function salvarTutor(event) {
-    event.preventDefault();
-
-    const idTutor = document.querySelector("#id-tutor").value;
-
-    const tutor = {
-        nome: document.querySelector("#nome").value,
-        telefone: document.querySelector("#telefone").value,
-        email: document.querySelector("#email").value,
-        morada: document.querySelector("#morada").value
-    };
-
-    const mensagem = document.querySelector("#mensagem-tutor");
-
-    try {
-        const resposta = await fetch(
-            idTutor ? `/tutores/${idTutor}` : "/tutores",
-            {
-                method: idTutor ? "PUT" : "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(tutor)
-            }
-        );
-
-        const resultado = await resposta.json();
-
-        if (!resposta.ok) {
-            throw new Error(resultado.erro || "Erro ao salvar tutor.");
-        }
-
-        mensagem.textContent = resultado.mensagem;
-
-        document.querySelector("#form-tutor").reset();
-        cancelarEdicao();
-
-        await listarTutores();
-
-    } catch (erro) {
-        mensagem.textContent = erro.message;
-    }
-}
-
-
-// PREPARAR EDIÇÃO
-
-function editarTutor(idTutor) {
-    const tutor = tutoresCadastrados.find(
-        item => item.id_tutor === idTutor
-    );
-
-    if (!tutor) return;
-
-    document.querySelector("#id-tutor").value = tutor.id_tutor;
-    document.querySelector("#nome").value = tutor.nome;
-    document.querySelector("#telefone").value = tutor.telefone;
-    document.querySelector("#email").value = tutor.email || "";
-    document.querySelector("#morada").value = tutor.morada || "";
-
-    document.querySelector("#titulo-formulario").textContent = "Editar tutor";
-    document.querySelector("#botao-cadastrar").textContent = "Salvar alterações";
-    document.querySelector("#botao-cancelar").hidden = false;
-
-    document.querySelector("#mensagem-tutor").textContent = "";
-
-    document.querySelector("#form-tutor").scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-}
-
-
-// CANCELAR EDIÇÃO
-
-function cancelarEdicao() {
-    document.querySelector("#form-tutor").reset();
-    document.querySelector("#id-tutor").value = "";
-
-    document.querySelector("#titulo-formulario").textContent = "Cadastrar tutor";
-    document.querySelector("#botao-cadastrar").textContent = "Cadastrar tutor";
-    document.querySelector("#botao-cancelar").hidden = true;
-}
-
-
-// EXCLUIR TUTOR
-
-async function excluirTutor(idTutor) {
-    const confirmar = confirm(
-        `Tem certeza que deseja excluir o tutor de ID ${idTutor}?`
-    );
-
-    if (!confirmar) return;
-
-    try {
-        const resposta = await fetch(`/tutores/${idTutor}`, {
-            method: "DELETE"
-        });
-
-        const resultado = await resposta.json();
-
-        if (!resposta.ok) {
-            throw new Error(resultado.erro || "Erro ao excluir tutor.");
-        }
-
-        document.querySelector("#mensagem-tutor").textContent = resultado.mensagem;
-
-        await listarTutores();
-
-    } catch (erro) {
-        document.querySelector("#mensagem-tutor").textContent = erro.message;
-    }
-}
-
-
-// ABRIR PÁGINAS
-
-function abrirPagina(pagina) {
+    // Não faz nada se o nome não corresponder a uma página existente.
     if (!paginas[pagina]) return;
 
     conteudo.innerHTML = paginas[pagina];
 
+    // Atualiza o destaque do item selecionado no menu.
     linksMenu.forEach(link => {
-        link.classList.toggle("ativo", link.textContent.trim() === pagina);
+        link.classList.toggle(
+            "ativo",
+            identificarPagina(link.textContent.trim()) === pagina
+        );
     });
 
+
+    // Atualiza os totais quando o Dashboard é aberto.
     if (pagina === "Dashboard") {
         atualizarDashboard();
     }
 
+
+    // Inicializa os eventos e os dados da página de tutores.
     if (pagina === "Tutores") {
         listarTutores();
 
@@ -345,15 +391,51 @@ function abrirPagina(pagina) {
             cancelarEdicao
         );
     }
+
+
+    // Inicializa os eventos e os dados da página de cães.
+    if (pagina === "Cães") {
+        carregarTutoresNoSelect();
+        listarCaes();
+
+        document.querySelector("#form-cao").addEventListener(
+            "submit",
+            salvarCao
+        );
+
+        document.querySelector("#botao-cancelar-cao").addEventListener(
+            "click",
+            cancelarEdicaoCao
+        );
+    }
+
+
+    // Inicializa os eventos e os dados da página de hospedagens.
+    if (pagina === "Hospedagens") {
+        inicializarHospedagens();
+    }
 }
 
 
+// ==========================================================
+// CLIQUES DO MENU
+// ==========================================================
+
+// Adiciona um evento a cada link do menu lateral.
 linksMenu.forEach(link => {
     link.addEventListener("click", function(event) {
+        // Evita que o navegador siga o link "#".
         event.preventDefault();
+
+        // Abre a página correspondente ao texto do link.
         abrirPagina(this.textContent.trim());
     });
 });
 
 
-atualizarDashboard();
+// ==========================================================
+// ABRIR PÁGINA INICIAL
+// ==========================================================
+
+// Exibe o Dashboard assim que o sistema é carregado.
+abrirPagina("Inicio");
