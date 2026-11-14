@@ -1,4 +1,3 @@
-
 // Importa as funções utilizadas em cada página.
 import { atualizarDashboard } from "./dashboard.js";
 

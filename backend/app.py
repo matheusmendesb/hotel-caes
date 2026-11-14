@@ -1,4 +1,3 @@
-
 # Importa os recursos necessários do Flask para criar rotas,
 # receber dados enviados pelo frontend e servir arquivos.
 from flask import Flask, request, jsonify, send_from_directory

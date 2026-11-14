@@ -1,4 +1,3 @@
-
 // Armazena os tutores recebidos do backend.
 let tutoresCadastrados = [];
 

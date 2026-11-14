@@ -1,4 +1,3 @@
-
 // Armazena os cães e as hospedagens recebidos do backend.
 let caesCadastrados = [];
 let hospedagensCadastradas = [];

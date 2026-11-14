@@ -1,5 +1,4 @@
 # Configurações de acesso ao banco de dados MySQL.
-
 # Endereço do servidor MySQL.
 DB_HOST = "localhost"
 

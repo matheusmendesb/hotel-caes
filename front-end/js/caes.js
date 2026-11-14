@@ -1,4 +1,3 @@
-
 // Armazena os tutores e cães recebidos do backend.
 let tutoresCadastrados = [];
 let caesCadastrados = [];
