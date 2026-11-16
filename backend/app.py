@@ -1,5 +1,5 @@
-# Importa os recursos necessários do Flask para criar rotas,
-# receber dados enviados pelo frontend e servir arquivos.
+
+# Importa os recursos necessários do Flask.
 from flask import Flask, request, jsonify, send_from_directory
 
 # Permite trabalhar com caminhos de arquivos e pastas.
@@ -8,16 +8,15 @@ from pathlib import Path
 # Permite converter e comparar datas e horários.
 from datetime import datetime
 
-# Importa a exceção gerada pelo MySQL quando uma operação
-# viola uma restrição do banco, como uma chave estrangeira.
+# Importa a exceção gerada pelo MySQL.
 from mysql.connector import IntegrityError
 
-# Importa as classes que representam as entidades do sistema.
+# Importa as classes das entidades do sistema.
 from backend.tutor import Tutor
 from backend.cao import Cao
 from backend.hospedagem import Hospedagem
 
-# Importa as funções responsáveis pelas operações no banco de dados.
+# Importa as funções de acesso ao banco de dados.
 from backend.dao import (
     cadastrar_tutor,
     listar_tutores,
@@ -33,46 +32,54 @@ from backend.dao import (
     excluir_hospedagem
 )
 
-# Importa a função que cria a conexão com o MySQL.
+# Importa a função de conexão com o MySQL.
 from backend.database import conectar
 
 
 # Define o caminho da pasta principal do projeto.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Cria a aplicação Flask e configura a pasta dos arquivos estáticos,
-# como CSS e JavaScript.
-app = Flask(
-    __name__,
-    static_folder=str(BASE_DIR / "front-end"),
-    static_url_path="/front-end"
-)
+# Cria a aplicação Flask.
+app = Flask(__name__, static_folder=None)
 
 
-# ROTA PRINCIPAL
-# Abre o arquivo index.html quando o usuário acessa a página inicial.
+# ==========================================================
+# ARQUIVOS DO SISTEMA
+# ==========================================================
+
+# Abre o arquivo principal do sistema.
 @app.route("/")
 def inicio():
     return send_from_directory(BASE_DIR, "index.html")
+
+
+# Disponibiliza os arquivos CSS.
+@app.route("/css/<path:arquivo>")
+def arquivos_css(arquivo):
+    return send_from_directory(BASE_DIR / "css", arquivo)
+
+
+# Disponibiliza os arquivos JavaScript.
+@app.route("/js/<path:arquivo>")
+def arquivos_js(arquivo):
+    return send_from_directory(BASE_DIR / "js", arquivo)
 
 
 # ==========================================================
 # ROTAS DE TUTORES
 # ==========================================================
 
-# GET: consulta todos os tutores cadastrados.
+# GET: consulta todos os tutores.
 @app.route("/tutores", methods=["GET"])
 def consultar_tutores():
     return jsonify(listar_tutores())
 
 
-# POST: recebe os dados do formulário e cadastra um tutor.
+# POST: cadastra um tutor.
 @app.route("/tutores", methods=["POST"])
 def adicionar_tutor():
     dados = request.get_json()
 
-    # O frontend envia o endereço, mas a classe Tutor
-    # ainda utiliza o nome morada internamente.
     tutor = Tutor(
         dados["nome"],
         dados["telefone"],
@@ -85,7 +92,7 @@ def adicionar_tutor():
     return jsonify({"mensagem": "Tutor cadastrado!"}), 201
 
 
-# PUT: atualiza os dados de um tutor específico.
+# PUT: atualiza um tutor.
 @app.route("/tutores/<int:id_tutor>", methods=["PUT"])
 def atualizar_tutor(id_tutor):
     dados = request.get_json()
@@ -105,7 +112,7 @@ def atualizar_tutor(id_tutor):
     return jsonify({"mensagem": "Tutor atualizado com sucesso!"})
 
 
-# DELETE: exclui um tutor pelo seu ID.
+# DELETE: exclui um tutor.
 @app.route("/tutores/<int:id_tutor>", methods=["DELETE"])
 def remover_tutor(id_tutor):
     try:
@@ -116,7 +123,6 @@ def remover_tutor(id_tutor):
 
         return jsonify({"mensagem": "Tutor excluído com sucesso!"})
 
-    # Impede a exclusão quando existem cães vinculados ao tutor.
     except IntegrityError:
         return jsonify({
             "erro": "Não é possível excluir este tutor porque existem cães vinculados a ele."
@@ -127,13 +133,13 @@ def remover_tutor(id_tutor):
 # ROTAS DE CÃES
 # ==========================================================
 
-# GET: consulta todos os cães cadastrados.
+# GET: consulta todos os cães.
 @app.route("/caes", methods=["GET"])
 def consultar_caes():
     return jsonify(listar_caes())
 
 
-# POST: recebe os dados do formulário e cadastra um cão.
+# POST: cadastra um cão.
 @app.route("/caes", methods=["POST"])
 def adicionar_cao():
     dados = request.get_json()
@@ -155,7 +161,7 @@ def adicionar_cao():
     return jsonify({"mensagem": "Cão cadastrado!"}), 201
 
 
-# PUT: atualiza os dados de um cão específico.
+# PUT: atualiza um cão.
 @app.route("/caes/<int:id_cao>", methods=["PUT"])
 def atualizar_cao(id_cao):
     dados = request.get_json()
@@ -180,7 +186,7 @@ def atualizar_cao(id_cao):
     return jsonify({"mensagem": "Cão atualizado com sucesso!"})
 
 
-# DELETE: exclui um cão pelo seu ID.
+# DELETE: exclui um cão.
 @app.route("/caes/<int:id_cao>", methods=["DELETE"])
 def remover_cao(id_cao):
     try:
@@ -191,7 +197,6 @@ def remover_cao(id_cao):
 
         return jsonify({"mensagem": "Cão excluído com sucesso!"})
 
-    # Impede a exclusão quando existem hospedagens vinculadas ao cão.
     except IntegrityError:
         return jsonify({
             "erro": "Não é possível excluir este cão porque existem hospedagens vinculadas a ele."
@@ -202,7 +207,7 @@ def remover_cao(id_cao):
 # FUNÇÕES AUXILIARES DE HOSPEDAGEM
 # ==========================================================
 
-# Converte os dados de uma hospedagem para um formato JSON.
+# Converte os dados de uma hospedagem para JSON.
 def formatar_hospedagem(hospedagem):
     return {
         "id_hospedagem": hospedagem["id_hospedagem"],
@@ -224,8 +229,7 @@ def formatar_hospedagem(hospedagem):
     }
 
 
-# Cria um objeto Hospedagem a partir dos dados recebidos.
-# Também valida o peso e a ordem das datas.
+# Cria um objeto Hospedagem e valida seus dados.
 def criar_objeto_hospedagem(dados):
     cao_id = int(dados["cao_id"])
     peso_registrado = float(dados["peso_registrado"])
@@ -233,6 +237,7 @@ def criar_objeto_hospedagem(dados):
     data_entrada = datetime.fromisoformat(dados["data_entrada"])
 
     data_saida_texto = dados.get("data_saida")
+
     data_saida = (
         datetime.fromisoformat(data_saida_texto)
         if data_saida_texto
@@ -270,7 +275,7 @@ def consultar_hospedagens():
     ])
 
 
-# POST: cadastra uma nova hospedagem.
+# POST: cadastra uma hospedagem.
 @app.route("/hospedagens", methods=["POST"])
 def adicionar_hospedagem():
     dados = request.get_json()
@@ -294,7 +299,7 @@ def adicionar_hospedagem():
         }), 400
 
 
-# PUT: atualiza uma hospedagem existente.
+# PUT: atualiza uma hospedagem.
 @app.route("/hospedagens/<int:id_hospedagem>", methods=["PUT"])
 def atualizar_hospedagem(id_hospedagem):
     dados = request.get_json()
@@ -322,7 +327,7 @@ def atualizar_hospedagem(id_hospedagem):
         }), 400
 
 
-# DELETE: exclui uma hospedagem pelo seu ID.
+# DELETE: exclui uma hospedagem.
 @app.route("/hospedagens/<int:id_hospedagem>", methods=["DELETE"])
 def remover_hospedagem(id_hospedagem):
     excluido = excluir_hospedagem(id_hospedagem)
