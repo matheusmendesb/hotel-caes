@@ -355,5 +355,5 @@ if __name__ == "__main__":
 
         app.run(debug=True)
 
-    except Exception as erro:
+    except Exception as erro:w
         print("Erro ao conectar:", erro)
