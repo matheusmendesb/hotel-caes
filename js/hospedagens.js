@@ -1,3 +1,5 @@
+import { escaparHTML, mostrarMensagem } from "./utils.js";
+
 // Armazena os cães e as hospedagens recebidos do backend.
 let caesCadastrados = [];
 let hospedagensCadastradas = [];
@@ -20,7 +22,7 @@ export async function carregarCaesNoSelect() {
 
         caesCadastrados.forEach(cao => {
             select.innerHTML += `
-                <option value="${cao.id_cao}">
+                <option value="${Number(cao.id_cao)}">
                     ${escaparHTML(cao.nome)}
                 </option>
             `;
@@ -41,18 +43,6 @@ function formatarDataHora(valor) {
     if (isNaN(data.getTime())) return "-";
 
     return data.toLocaleString("pt-BR");
-}
-
-
-// Evita que caracteres especiais sejam interpretados como HTML.
-function escaparHTML(valor) {
-    return String(valor ?? "").replace(/[&<>"']/g, caractere => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[caractere]);
 }
 
 
@@ -87,6 +77,7 @@ export async function listarHospedagens() {
                 item => Number(item.id_cao) === Number(hospedagem.cao_id)
             );
 
+            // Sem saída, ou saída ainda no futuro: em andamento.
             const situacao = hospedagem.data_saida &&
                 new Date(hospedagem.data_saida) < new Date()
                 ? "Finalizada"
@@ -94,20 +85,20 @@ export async function listarHospedagens() {
 
             return `
                 <tr>
-                    <td>${hospedagem.id_hospedagem}</td>
+                    <td>${Number(hospedagem.id_hospedagem)}</td>
                     <td>${escaparHTML(cao ? cao.nome : "Não encontrado")}</td>
-                    <td>${hospedagem.peso_registrado ?? "-"}</td>
+                    <td>${escaparHTML(hospedagem.peso_registrado ?? "-")}</td>
                     <td>${formatarDataHora(hospedagem.data_entrada)}</td>
                     <td>${formatarDataHora(hospedagem.data_saida)}</td>
                     <td>${situacao}</td>
                     <td>
                         <button type="button" class="btn-acao btn-editar"
-                            onclick="editarHospedagem(${hospedagem.id_hospedagem})">
+                            onclick="editarHospedagem(${Number(hospedagem.id_hospedagem)})">
                             Editar
                         </button>
 
                         <button type="button" class="btn-acao btn-excluir"
-                            onclick="excluirHospedagem(${hospedagem.id_hospedagem})">
+                            onclick="excluirHospedagem(${Number(hospedagem.id_hospedagem)})">
                             Excluir
                         </button>
                     </td>
@@ -137,7 +128,7 @@ async function salvarHospedagem(event) {
     const mensagem = document.querySelector("#mensagem-hospedagem");
 
     if (dataSaida && new Date(dataSaida) < new Date(dataEntrada)) {
-        mensagem.textContent = "A saída não pode ser anterior à entrada.";
+        mostrarMensagem(mensagem, "A saída não pode ser anterior à entrada.", true);
         return;
     }
 
@@ -166,13 +157,15 @@ async function salvarHospedagem(event) {
             throw new Error(resultado.erro || "Erro ao salvar hospedagem.");
         }
 
-        mensagem.textContent = resultado.mensagem || "Hospedagem salva com sucesso.";
-
         cancelarEdicaoHospedagem();
+        mostrarMensagem(
+            mensagem,
+            resultado.mensagem || "Hospedagem salva com sucesso."
+        );
         await listarHospedagens();
 
     } catch (erro) {
-        mensagem.textContent = erro.message;
+        mostrarMensagem(mensagem, erro.message, true);
     }
 }
 
@@ -200,6 +193,7 @@ export function editarHospedagem(id) {
         "Salvar alterações";
 
     document.querySelector("#botao-cancelar-hospedagem").hidden = false;
+    document.querySelector("#mensagem-hospedagem").textContent = "";
 
     document.querySelector("#form-hospedagem").scrollIntoView({
         behavior: "smooth"
@@ -219,7 +213,6 @@ function cancelarEdicaoHospedagem() {
         "Cadastrar hospedagem";
 
     document.querySelector("#botao-cancelar-hospedagem").hidden = true;
-    document.querySelector("#mensagem-hospedagem").textContent = "";
 }
 
 
@@ -228,6 +221,8 @@ export async function excluirHospedagem(id) {
     if (!confirm("Deseja realmente excluir esta hospedagem?")) {
         return;
     }
+
+    const mensagem = document.querySelector("#mensagem-hospedagem");
 
     try {
         const resposta = await fetch(`/hospedagens/${id}`, {
@@ -240,25 +235,24 @@ export async function excluirHospedagem(id) {
             throw new Error(resultado.erro || "Erro ao excluir hospedagem.");
         }
 
-        alert(resultado.mensagem || "Hospedagem excluída com sucesso.");
-
         if (document.querySelector("#id-hospedagem").value == id) {
             cancelarEdicaoHospedagem();
         }
 
+        mostrarMensagem(
+            mensagem,
+            resultado.mensagem || "Hospedagem excluída com sucesso."
+        );
         await listarHospedagens();
 
     } catch (erro) {
-        alert(erro.message);
+        mostrarMensagem(mensagem, erro.message, true);
     }
 }
 
 
 // Inicializa os dados e os eventos da página de hospedagens.
-export function inicializarHospedagens() {
-    carregarCaesNoSelect();
-    listarHospedagens();
-
+export async function inicializarHospedagens() {
     document.querySelector("#form-hospedagem").addEventListener(
         "submit",
         salvarHospedagem
@@ -268,4 +262,11 @@ export function inicializarHospedagens() {
         "click",
         cancelarEdicaoHospedagem
     );
+
+    // Aguarda os dois carregamentos para que o select já esteja
+    // preenchido quando o usuário clicar em "Editar".
+    await Promise.all([
+        carregarCaesNoSelect(),
+        listarHospedagens()
+    ]);
 }

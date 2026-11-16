@@ -1,4 +1,3 @@
-
 # Importa os recursos necessários do Flask.
 from flask import Flask, request, jsonify, send_from_directory
 
@@ -80,16 +79,22 @@ def consultar_tutores():
 def adicionar_tutor():
     dados = request.get_json()
 
-    tutor = Tutor(
-        dados["nome"],
-        dados["telefone"],
-        dados.get("email"),
-        dados.get("endereco")
-    )
+    try:
+        tutor = Tutor(
+            dados["nome"],
+            dados["telefone"],
+            dados.get("email"),
+            dados.get("endereco")
+        )
 
-    cadastrar_tutor(tutor)
+        cadastrar_tutor(tutor)
 
-    return jsonify({"mensagem": "Tutor cadastrado!"}), 201
+        return jsonify({"mensagem": "Tutor cadastrado!"}), 201
+
+    except (KeyError, TypeError):
+        return jsonify({
+            "erro": "Preencha o nome e o telefone do tutor."
+        }), 400
 
 
 # PUT: atualiza um tutor.
@@ -97,19 +102,25 @@ def adicionar_tutor():
 def atualizar_tutor(id_tutor):
     dados = request.get_json()
 
-    tutor = Tutor(
-        dados["nome"],
-        dados["telefone"],
-        dados.get("email"),
-        dados.get("endereco")
-    )
+    try:
+        tutor = Tutor(
+            dados["nome"],
+            dados["telefone"],
+            dados.get("email"),
+            dados.get("endereco")
+        )
 
-    atualizado = editar_tutor(id_tutor, tutor)
+        atualizado = editar_tutor(id_tutor, tutor)
 
-    if not atualizado:
-        return jsonify({"erro": "Tutor não encontrado!"}), 404
+        if not atualizado:
+            return jsonify({"erro": "Tutor não encontrado!"}), 404
 
-    return jsonify({"mensagem": "Tutor atualizado com sucesso!"})
+        return jsonify({"mensagem": "Tutor atualizado com sucesso!"})
+
+    except (KeyError, TypeError):
+        return jsonify({
+            "erro": "Preencha o nome e o telefone do tutor."
+        }), 400
 
 
 # DELETE: exclui um tutor.
@@ -133,6 +144,11 @@ def remover_tutor(id_tutor):
 # ROTAS DE CÃES
 # ==========================================================
 
+# Converte o valor de "castrado" (true/false ou "true"/"false") para booleano.
+def converter_castrado(valor):
+    return str(valor).strip().lower() == "true"
+
+
 # GET: consulta todos os cães.
 @app.route("/caes", methods=["GET"])
 def consultar_caes():
@@ -144,21 +160,32 @@ def consultar_caes():
 def adicionar_cao():
     dados = request.get_json()
 
-    cao = Cao(
-        dados["nome"],
-        dados["raca"],
-        dados["sexo"],
-        dados["peso_atual"],
-        dados["porte"],
-        dados["idade"],
-        dados["castrado"],
-        dados.get("observacoes"),
-        dados["tutor_id"]
-    )
+    try:
+        cao = Cao(
+            dados["nome"],
+            dados["raca"],
+            dados["sexo"],
+            dados["peso_atual"],
+            dados["porte"],
+            dados["idade"],
+            converter_castrado(dados["castrado"]),
+            dados.get("observacoes"),
+            dados["tutor_id"]
+        )
 
-    cadastrar_cao(cao)
+        cadastrar_cao(cao)
 
-    return jsonify({"mensagem": "Cão cadastrado!"}), 201
+        return jsonify({"mensagem": "Cão cadastrado!"}), 201
+
+    except (KeyError, TypeError, ValueError):
+        return jsonify({
+            "erro": "Verifique os dados do cão. Todos os campos, exceto observações, são obrigatórios."
+        }), 400
+
+    except IntegrityError:
+        return jsonify({
+            "erro": "Não foi possível cadastrar o cão. Verifique se o tutor existe."
+        }), 400
 
 
 # PUT: atualiza um cão.
@@ -166,24 +193,35 @@ def adicionar_cao():
 def atualizar_cao(id_cao):
     dados = request.get_json()
 
-    cao = Cao(
-        dados["nome"],
-        dados["raca"],
-        dados["sexo"],
-        dados["peso_atual"],
-        dados["porte"],
-        dados["idade"],
-        dados["castrado"],
-        dados.get("observacoes"),
-        dados["tutor_id"]
-    )
+    try:
+        cao = Cao(
+            dados["nome"],
+            dados["raca"],
+            dados["sexo"],
+            dados["peso_atual"],
+            dados["porte"],
+            dados["idade"],
+            converter_castrado(dados["castrado"]),
+            dados.get("observacoes"),
+            dados["tutor_id"]
+        )
 
-    atualizado = editar_cao(id_cao, cao)
+        atualizado = editar_cao(id_cao, cao)
 
-    if not atualizado:
-        return jsonify({"erro": "Cão não encontrado!"}), 404
+        if not atualizado:
+            return jsonify({"erro": "Cão não encontrado!"}), 404
 
-    return jsonify({"mensagem": "Cão atualizado com sucesso!"})
+        return jsonify({"mensagem": "Cão atualizado com sucesso!"})
+
+    except (KeyError, TypeError, ValueError):
+        return jsonify({
+            "erro": "Verifique os dados do cão. Todos os campos, exceto observações, são obrigatórios."
+        }), 400
+
+    except IntegrityError:
+        return jsonify({
+            "erro": "Não foi possível atualizar o cão. Verifique se o tutor existe."
+        }), 400
 
 
 # DELETE: exclui um cão.
@@ -355,5 +393,5 @@ if __name__ == "__main__":
 
         app.run(debug=True)
 
-    except Exception as erro:w
+    except Exception as erro:
         print("Erro ao conectar:", erro)

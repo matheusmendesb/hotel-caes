@@ -2,6 +2,18 @@
 let tutoresCadastrados = [];
 
 
+// Evita que caracteres especiais sejam interpretados como HTML.
+function escaparHTML(valor) {
+    return String(valor ?? "").replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[caractere]);
+}
+
+
 // Lista os tutores na tabela.
 export async function listarTutores() {
     const tabela = document.querySelector("#lista-tutores");
@@ -29,10 +41,10 @@ export async function listarTutores() {
             tabela.innerHTML += `
                 <tr>
                     <td>${tutor.id_tutor}</td>
-                    <td>${tutor.nome}</td>
-                    <td>${tutor.telefone}</td>
-                    <td>${tutor.email || "-"}</td>
-                    <td>${tutor.endereco || "-"}</td>
+                    <td>${escaparHTML(tutor.nome)}</td>
+                    <td>${escaparHTML(tutor.telefone)}</td>
+                    <td>${escaparHTML(tutor.email || "-")}</td>
+                    <td>${escaparHTML(tutor.endereco || "-")}</td>
                     <td>
                         <button type="button" class="btn-acao btn-editar"
                             onclick="editarTutor(${tutor.id_tutor})">
