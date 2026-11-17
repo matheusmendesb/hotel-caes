@@ -1,18 +1,7 @@
+
 // Armazena os tutores e cães recebidos do backend.
 let tutoresCadastrados = [];
 let caesCadastrados = [];
-
-
-// Evita que caracteres especiais sejam interpretados como HTML.
-function escaparHTML(valor) {
-    return String(valor ?? "").replace(/[&<>"']/g, caractere => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[caractere]);
-}
 
 
 // Carrega os tutores no campo de seleção.
@@ -31,7 +20,7 @@ export async function carregarTutoresNoSelect() {
 
         tutoresCadastrados.forEach(tutor => {
             select.innerHTML += `
-                <option value="${tutor.id_tutor}">${escaparHTML(tutor.nome)}</option>
+                <option value="${tutor.id_tutor}">${tutor.nome}</option>
             `;
         });
 
@@ -75,15 +64,15 @@ export async function listarCaes() {
             return `
                 <tr>
                     <td>${cao.id_cao}</td>
-                    <td>${escaparHTML(cao.nome)}</td>
-                    <td>${escaparHTML(cao.raca)}</td>
-                    <td>${escaparHTML(cao.sexo)}</td>
+                    <td>${cao.nome}</td>
+                    <td>${cao.raca}</td>
+                    <td>${cao.sexo}</td>
                     <td>${cao.peso_atual ?? "-"}</td>
-                    <td>${escaparHTML(cao.porte)}</td>
+                    <td>${cao.porte}</td>
                     <td>${cao.idade}</td>
-                    <td>${cao.castrado ? "Sim" : "Não"}</td>
-                    <td>${escaparHTML(cao.observacoes || "-")}</td>
-                    <td>${escaparHTML(tutor ? tutor.nome : "Não encontrado")}</td>
+                    <td>${Number(cao.castrado) === 1 ? "Sim" : "Não"}</td>
+                    <td>${cao.observacoes || "-"}</td>
+                    <td>${tutor ? tutor.nome : "Não encontrado"}</td>
                     <td>
                         <button type="button" class="btn-acao btn-editar"
                             onclick="editarCao(${cao.id_cao})">
@@ -115,6 +104,7 @@ export async function salvarCao(event) {
     event.preventDefault();
 
     const id = document.querySelector("#id-cao").value;
+    const valorCastrado = document.querySelector("#castrado-cao").value;
 
     const dados = {
         nome: document.querySelector("#nome-cao").value,
@@ -123,7 +113,7 @@ export async function salvarCao(event) {
         peso_atual: document.querySelector("#peso-cao").value,
         porte: document.querySelector("#porte-cao").value,
         idade: document.querySelector("#idade-cao").value,
-        castrado: document.querySelector("#castrado-cao").value,
+        castrado: ["true", "1", "sim"].includes(valorCastrado.toLowerCase()) ? 1 : 0,
         observacoes: document.querySelector("#observacoes-cao").value,
         tutor_id: document.querySelector("#tutor-cao").value
     };
@@ -174,8 +164,8 @@ export function editarCao(idCao) {
     document.querySelector("#peso-cao").value = cao.peso_atual;
     document.querySelector("#porte-cao").value = cao.porte;
     document.querySelector("#idade-cao").value = cao.idade;
-    // O MySQL devolve 1 ou 0; o select espera "true" ou "false".
-    document.querySelector("#castrado-cao").value = cao.castrado ? "true" : "false";
+    document.querySelector("#castrado-cao").value =
+        Number(cao.castrado) === 1 ? "true" : "false";
     document.querySelector("#observacoes-cao").value = cao.observacoes || "";
     document.querySelector("#tutor-cao").value = cao.tutor_id;
 
