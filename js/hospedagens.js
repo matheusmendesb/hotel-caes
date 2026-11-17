@@ -1,8 +1,26 @@
-import { escaparHTML, mostrarMensagem } from "./utils.js";
 
 // Armazena os cães e as hospedagens recebidos do backend.
 let caesCadastrados = [];
 let hospedagensCadastradas = [];
+
+
+// Protege textos para evitar interpretação indevida como HTML.
+function escaparHTML(valor) {
+    return String(valor ?? "").replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[caractere]);
+}
+
+
+// Exibe mensagens de sucesso ou erro.
+function mostrarMensagem(elemento, mensagem, erro = false) {
+    elemento.textContent = mensagem;
+    elemento.style.color = erro ? "#b42318" : "#26734d";
+}
 
 
 // Carrega os cães cadastrados no campo de seleção.
@@ -77,7 +95,6 @@ export async function listarHospedagens() {
                 item => Number(item.id_cao) === Number(hospedagem.cao_id)
             );
 
-            // Sem saída, ou saída ainda no futuro: em andamento.
             const situacao = hospedagem.data_saida &&
                 new Date(hospedagem.data_saida) < new Date()
                 ? "Finalizada"
@@ -263,8 +280,6 @@ export async function inicializarHospedagens() {
         cancelarEdicaoHospedagem
     );
 
-    // Aguarda os dois carregamentos para que o select já esteja
-    // preenchido quando o usuário clicar em "Editar".
     await Promise.all([
         carregarCaesNoSelect(),
         listarHospedagens()
